@@ -1,495 +1,7 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>财务管理刷题练习</title>
-<style>
-:root {
-  --bg: #f0f2f5;
-  --card: #fff;
-  --text: #1a1a1a;
-  --sub: #888;
-  --accent: #4f46e5;
-  --accent-light: #eef2ff;
-  --correct: #16a34a;
-  --correct-bg: #f0fdf4;
-  --wrong: #dc2626;
-  --wrong-bg: #fef2f2;
-  --border: #e5e7eb;
-  --radius: 14px;
-  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-/* ========== HOME / CHAPTER LIST ========== */
-.home-wrap {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 32px 16px 60px;
-}
-.home-header {
-  text-align: center;
-  margin-bottom: 28px;
-}
-.home-header h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.home-header .subtitle {
-  font-size: 13px;
-  color: var(--sub);
-}
-.chapter-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.chapter-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all .15s;
-  text-align: left;
-}
-.chapter-card:active { transform: scale(0.98); background: #fafafa; }
-.chapter-card .ch-info { flex: 1; }
-.chapter-card .ch-name {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.chapter-card .ch-meta {
-  font-size: 12px;
-  color: var(--sub);
-  display: flex;
-  gap: 12px;
-}
-.chapter-card .ch-arrow { color: #ccc; font-size: 20px; }
-.type-badge {
-  display: inline-block;
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-.type-badge.single { background: #dbeafe; color: #2563eb; }
-.type-badge.multi { background: #fef3c7; color: #d97706; }
-.type-badge.judge { background: #ede9fe; color: #7c3aed; }
-
-/* ========== URL input bar ========== */
-.url-bar {
-  max-width: 600px;
-  margin: 0 auto 0;
-  padding: 0 16px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.url-bar input {
-  flex: 1;
-  padding: 9px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 13px;
-  outline: none;
-  background: var(--card);
-}
-.url-bar input:focus { border-color: var(--accent); }
-.url-bar .url-hint {
-  font-size: 11px;
-  color: var(--sub);
-  white-space: nowrap;
-}
-
-/* ========== QUIZ MODE ========== */
-.quiz-wrap {
-  max-width: 500px;
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.quiz-topbar {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--sub);
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-}
-.quiz-topbar .back-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: var(--text);
-  padding: 4px;
-  line-height: 1;
-}
-.progress-bar-wrap {
-  height: 3px;
-  background: var(--border);
-}
-.progress-bar-fill {
-  height: 100%;
-  background: var(--accent);
-  transition: width .3s;
-}
-.quiz-body {
-  flex: 1;
-  padding: 20px 16px;
-}
-.question-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px 18px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  margin-bottom: 14px;
-}
-.question-card .q-type-tag {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  display: inline-block;
-}
-.q-type-tag.tag-single { background: #dbeafe; color: #2563eb; }
-.q-type-tag.tag-multi { background: #fef3c7; color: #d97706; }
-.q-type-tag.tag-judge { background: #ede9fe; color: #7c3aed; }
-.q-type-tag.tag-calc { background: #fce7f3; color: #db2777; }
-.question-card .q-title {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.6;
-  margin-bottom: 18px;
-}
-
-.option-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  background: #fff;
-  cursor: pointer;
-  transition: all .12s;
-  font-size: 15px;
-  line-height: 1.5;
-}
-.option-item:active { transform: scale(0.98); }
-.option-item .opt-indicator {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  border: 2px solid #d1d5db;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  margin-top: 1px;
-  transition: all .15s;
-}
-.option-item.selected .opt-indicator {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-.multi-mode .option-item .opt-indicator {
-  border-radius: 4px;
-}
-.option-item.selected {
-  border-color: var(--accent);
-  background: var(--accent-light);
-}
-.option-item.correct {
-  border-color: var(--correct);
-  background: var(--correct-bg);
-}
-.option-item.correct .opt-indicator {
-  background: var(--correct);
-  border-color: var(--correct);
-  color: #fff;
-}
-.option-item.wrong {
-  border-color: var(--wrong);
-  background: var(--wrong-bg);
-}
-.option-item.wrong .opt-indicator {
-  background: var(--wrong);
-  border-color: var(--wrong);
-  color: #fff;
-}
-.option-item:disabled { pointer-events: none; opacity: 1; }
-
-.feedback {
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
-  margin: 10px 0 0;
-  min-height: 24px;
-}
-.feedback.ok { color: var(--correct); }
-.feedback.bad { color: var(--wrong); }
-
-.quiz-nav {
-  display: flex;
-  gap: 10px;
-  padding: 0 16px 20px;
-}
-.quiz-nav button {
-  flex: 1;
-  padding: 14px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  transition: all .15s;
-}
-.quiz-nav button:active { transform: scale(0.97); }
-.btn-confirm { background: var(--accent); color: #fff; }
-.btn-confirm:disabled { background: #c7d2fe; }
-.btn-next { background: var(--accent); color: #fff; }
-.btn-next:disabled { background: #c7d2fe; }
-.btn-skip { background: #f3f4f6; color: #6b7280; flex: 0.5 !important; }
-
-/* ========== RESULT ========== */
-.result-wrap {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  text-align: center;
-}
-.result-wrap .big-score {
-  font-size: 64px;
-  font-weight: 800;
-  color: var(--accent);
-}
-.result-wrap .score-label {
-  font-size: 14px;
-  color: var(--sub);
-  margin-bottom: 20px;
-}
-.result-stats {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-.stat-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 14px 20px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-}
-.stat-card .stat-val { font-size: 22px; font-weight: 700; }
-.stat-card .stat-lbl { font-size: 11px; color: var(--sub); }
-.stat-card.ok .stat-val { color: var(--correct); }
-.stat-card.bad .stat-val { color: var(--wrong); }
-
-.review-list {
-  text-align: left;
-  max-width: 500px;
-  margin: 0 auto 20px;
-}
-.review-item {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  font-size: 13px;
-}
-.review-item .ri-q { font-weight: 600; margin-bottom: 4px; }
-.review-item .ri-a { color: var(--correct); font-size: 12px; }
-.review-item .ri-your { color: var(--wrong); font-size: 12px; }
-
-/* ========== QR MODAL ========== */
-.qr-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.qr-modal {
-  background: #fff;
-  border-radius: var(--radius);
-  padding: 24px;
-  text-align: center;
-  max-width: 360px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0,0,0,.2);
-}
-.qr-modal img {
-  max-width: 240px;
-  border-radius: 8px;
-}
-.qr-modal .qr-url {
-  font-size: 11px;
-  color: var(--sub);
-  word-break: break-all;
-  margin: 10px 0;
-  background: #f9fafb;
-  padding: 6px 10px;
-  border-radius: 6px;
-  max-height: 36px;
-  overflow: hidden;
-}
-.qr-modal .qr-hint {
-  font-size: 12px;
-  color: var(--sub);
-}
-.qr-modal button {
-  margin-top: 12px;
-  padding: 8px 24px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-@keyframes popIn {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.15); }
-  100% { transform: scale(1); opacity: 1; }
-}
-.star-pop { animation: popIn .35s ease-out; }
-
-@media (max-width: 400px) {
-  .question-card { padding: 16px 14px; }
-  .question-card .q-title { font-size: 15px; }
-  .option-item { font-size: 14px; padding: 10px 12px; }
-}
-</style>
-</head>
-<body>
-
-<!-- ==================== ACTIVATION LOCK ==================== -->
-<div id="lockScreen">
-<div style="max-width:420px;margin:0 auto;padding:60px 24px;text-align:center">
-  <div style="font-size:64px;margin-bottom:12px">🔐</div>
-  <h2 style="font-size:22px;font-weight:700;margin-bottom:4px">财务管理 · 刷题题库</h2>
-  <p style="font-size:13px;color:var(--sub);margin-bottom:28px">9 章 · 163 题 · 输入激活码解锁全部内容</p>
-
-  <div style="background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);border:1px solid var(--border)">
-    <input type="text" id="actCode" class="code-input"
-           placeholder="XXXX-XXXX-XXXX"
-           maxlength="14"
-           autocomplete="off"
-           style="width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:10px;font-size:20px;text-align:center;letter-spacing:3px;font-family:monospace;font-weight:700;outline:none;text-transform:uppercase" />
-    <p style="font-size:11px;color:var(--sub);margin:8px 0 16px">请输入购买课程后获得的 12 位激活码</p>
-
-    <button id="btnActivate" onclick="doActivate()"
-            style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer">
-      激活题库
-    </button>
-
-    <div id="actError" style="color:#dc2626;font-size:13px;margin-top:12px;display:none"></div>
-  </div>
-
-  <p style="font-size:12px;color:var(--sub);margin-top:20px">如未购买激活码，请联系客服获取</p>
-</div>
-</div>
-
-<!-- ==================== HOME ==================== -->
-<div id="homeMode" style="display:none">
-<div class="home-wrap">
-  <div class="home-header">
-    <h1>财务管理 · 刷题练习</h1>
-    <p class="subtitle" id="homeSub">共 9 章 · 163 题</p>
-    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;align-items:center">
-      <button onclick="showMainQR()" style="background:#fff;border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">📱 生成全部题目二维码</button>
-    </div>
-  </div>
-  <div class="url-bar" style="margin-bottom:20px">
-    <input type="text" id="baseUrl" placeholder="托管地址（生成二维码用）" />
-    <span class="url-hint" style="cursor:pointer" onclick="autoDetectUrl()" title="自动检测">🔍 自动</span>
-  </div>
-  <div class="chapter-grid" id="chapterGrid"></div>
-  <div style="text-align:center;margin-top:28px;color:var(--sub);font-size:12px">
-    点击章节开始刷题 · 点击 📱 生成二维码
-  </div>
-</div>
-</div>
-
-<!-- ==================== QUIZ ==================== -->
-<div id="quizMode" style="display:none">
-<div class="quiz-wrap">
-  <div class="quiz-topbar">
-    <button class="back-btn" onclick="backToHome()" title="返回">←</button>
-    <span id="quizTitle" style="font-weight:600;color:var(--text)">刷题</span>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button id="btnShuffle" onclick="toggleShuffle()" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px" title="随机打乱">🔀</button>
-      <span id="progressText">1/10</span>
-    </div>
-  </div>
-  <div class="progress-bar-wrap">
-    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
-  </div>
-  <div class="quiz-body" id="quizBody"></div>
-  <div class="quiz-nav">
-    <button class="btn-skip" id="btnSkip" onclick="skipQuestion()">跳过</button>
-    <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>下一题 →</button>
-  </div>
-</div>
-</div>
-
-<!-- ==================== RESULT ==================== -->
-<div id="resultMode" style="display:none">
-<div class="result-wrap" id="resultContent"></div>
-</div>
-
-<!-- ==================== QR MODAL ==================== -->
-<div id="qrOverlay" class="qr-overlay" style="display:none" onclick="if(event.target===this)closeQR()">
-<div class="qr-modal">
-  <h3 style="margin-bottom:12px" id="qrChapterTitle"></h3>
-  <img id="qrImage" alt="QR Code" crossorigin="anonymous" />
-  <div class="qr-url" id="qrUrlText"></div>
-  <div class="qr-hint" id="qrHint"></div>
-  <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
-    <button onclick="downloadQR()" style="background:var(--accent);color:#fff;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px">下载二维码</button>
-    <button onclick="closeQR()" style="background:#f3f4f6;padding:8px 18px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:14px">关闭</button>
-  </div>
-</div>
-</div>
-
-<script>
-// Auto-generated question bank
-// Chapters: 11, Questions: 163
-const QUESTION_BANK = {
+{
   "作业一 财务管理总论": {
     "name": "作业一 财务管理总论",
+    "file": "作业一 财务管理总论.txt",
     "questions": [
       {
         "q": "经济繁荣时期，不应该选择的财务战略是（    ）",
@@ -831,10 +343,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 29
+    "quizCount": 29,
+    "totalCount": 29
   },
   "作业七  营运资本管理": {
     "name": "作业七  营运资本管理",
+    "file": "作业七  营运资本管理.txt",
     "questions": [
       {
         "q": "持有过量现金可能导致的不利后果是(      )",
@@ -1109,10 +623,12 @@ const QUESTION_BANK = {
         "type": "calc"
       }
     ],
-    "count": 27
+    "quizCount": 19,
+    "totalCount": 27
   },
   "作业三 证券估值": {
     "name": "作业三 证券估值",
+    "file": "作业三 证券估值.txt",
     "questions": [
       {
         "q": "债券投资者购买债券时，可以接受的最高价格是（      ）。",
@@ -1320,10 +836,12 @@ const QUESTION_BANK = {
         "type": "calc"
       }
     ],
-    "count": 19
+    "quizCount": 16,
+    "totalCount": 19
   },
   "作业二 （1）货币时间价值": {
     "name": "作业二 （1）货币时间价值",
+    "file": "作业二 （1）货币时间价值.txt",
     "questions": [
       {
         "q": "货币时间价值的实质是(     )。",
@@ -1537,10 +1055,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 22
+    "quizCount": 15,
+    "totalCount": 22
   },
   "作业二 （2）风险与报酬": {
     "name": "作业二 （2）风险与报酬",
+    "file": "作业二 （2）风险与报酬.txt",
     "questions": [
       {
         "q": "投资者冒着风险进行投资,是因为(     )。",
@@ -1725,10 +1245,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 16
+    "quizCount": 16,
+    "totalCount": 16
   },
   "作业五  （2）资本结构决策 ": {
     "name": "作业五  （2）资本结构决策 ",
+    "file": "作业五  （2）资本结构决策 .txt",
     "questions": [
       {
         "q": "某公司现有资本700万元，其中债务资本200万元，债务年利息24万元，普通股资本500万元，普通股份数为10万股，每股面值50元。固定成本总额为100万元。该公司的变动成本率60%，固定成本为180万元，适用所得税税率为25%。由于业务需要，需追加筹资300万元，假设不考虑筹资费用，现可供选择的筹资方案有：\n① 全部按面值发行普通股6万股，每股发行价50元；\n② 全部采用借入长期债务方式，借入长期债务的年利率为12%，利息36万元；\n③ 增发新股4万股，每股发行价47.5元，拟筹资190万元；剩余110万元通过溢价发行债券筹集，债券面值100元，票面利率10%。\n要求：用每股收益无差别点方法计算分析公司应该选择哪种筹资方案，为什么？",
@@ -1743,10 +1265,12 @@ const QUESTION_BANK = {
         "type": "calc"
       }
     ],
-    "count": 2
+    "quizCount": 0,
+    "totalCount": 2
   },
   "作业五 （1） 资本成本、杠杆系数 ": {
     "name": "作业五 （1） 资本成本、杠杆系数 ",
+    "file": "作业五 （1） 资本成本、杠杆系数 .txt",
     "questions": [
       {
         "q": "一般来说，企业各种资金来源中，资本成本最高的是（      ）。\nA、 优先股\nB、 普通股\nC、 债券\nD、 长期借款",
@@ -1953,10 +1477,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 29
+    "quizCount": 10,
+    "totalCount": 29
   },
   "作业八 股利分配": {
     "name": "作业八 股利分配",
+    "file": "作业八 股利分配.txt",
     "questions": [
       {
         "q": "容易造成股利支付额与本期净利润相脱节的股利分配政策是（     ）。",
@@ -2237,10 +1763,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 25
+    "quizCount": 25,
+    "totalCount": 25
   },
   "作业六 (1) 项目投资管理": {
     "name": "作业六 (1) 项目投资管理",
+    "file": "作业六 (1) 项目投资管理.txt",
     "questions": [
       {
         "q": "当某方案的净现值大于零时，其内部收益率(      )",
@@ -2392,10 +1920,12 @@ const QUESTION_BANK = {
         "type": "judge"
       }
     ],
-    "count": 17
+    "quizCount": 8,
+    "totalCount": 17
   },
   "作业六 （2）项目投资决策": {
     "name": "作业六 （2）项目投资决策",
+    "file": "作业六 （2）项目投资决策.txt",
     "questions": [
       {
         "q": "某公司原有设备一套，购置成本为150万元，预计使用10年，已使用5年，尚可使用5年，预计残值率10%，该公司采用直线法计提折旧，现该公司拟购买新设备替换旧设备，以提高生产率，降低成本。新设备购置成本为200万元，使用年限5年，同样采用直线法计提折旧，预计残值为购置成本的10%，使用新设备后公司每年的销售额可以从1500万元上升到1650万元，每年付现成本将从1100万元上升到1150万元。公司如购置新设备，旧设备出售可得变价收入100万元，该公司所得税税率为25%，资本成本率为10%。\n要求：通过计算说明该设备是否应更新。（15分）",
@@ -2428,10 +1958,12 @@ const QUESTION_BANK = {
         "type": "calc"
       }
     ],
-    "count": 5
+    "quizCount": 0,
+    "totalCount": 5
   },
   "作业四  长期筹资方式 ": {
     "name": "作业四  长期筹资方式 ",
+    "file": "作业四  长期筹资方式 .txt",
     "questions": [
       {
         "q": "以下项目中不属于敏感项目的是",
@@ -2752,733 +2284,7 @@ const QUESTION_BANK = {
         "type": "calc"
       }
     ],
-    "count": 29
-  }
-};
-
-</script>
-<script>
-// ==================== GLOBALS ====================
-const URL_KEY = 'quiz_host_url';
-const ACT_KEY = 'quiz_activated';
-let currentChapter = null;
-let quizQuestions = [];
-let currentIndex = 0;
-let userAnswers = [];   // single/judge: chosen index or -1; multi: array of indices or []
-let isRevealed = false;
-
-// ==================== ACTIVATION ====================
-const VALID_HASHES = [
-  "d1dd369859147bdfb0320b8e542a5a26c517aeda7e989ebd61b013c75c3a7203",
-  "fa0a2a82c543ad64a1667c1718e94a93ea7d2639a3fce412456022d066cb4a1a",
-  "c667a73dea21b8de2c2fd53fba423059fe444783bbb922419787b71beb758e8b",
-  "66115c9550235c9d1d81a650b14ace2915c3f7a1535d65c36876d0b369d6db8c",
-  "f7694fa8cd1c41dd85809c995ac5b61a0b7c3dabe424d2630c292e6717e8abd6",
-  "763ed37b29858e441e85d2c3247311154874d21b1b111112f24e5241714ffb97",
-  "8ff74338eb28d3bc9403cd99b931c1b653cb9938a38e1fa952516ff95701ad58",
-  "e46398e140ab33a2bd2865805e284fef526759b6fa3a1e8c951ab70315c35f1d",
-  "e11eb2adf52f5aeb4ba67c1dbd127acb6027e381d95e77a15492b2fb0a6ec5e4",
-  "5ab208b18c587a291ee27d72981a18f3641362c2a4b5241ea856969d840020ad",
-  "b76f1f32dff9eb308feab36e49e56d02778cb088ccfd1c8e90d32dc2474786ce",
-  "63b1e5b1745372dc3c1fb7a1faff800b6ffb8f9309dd6386c277bc3c0b48ecd4",
-  "3e4a524eb0994d128c05faa7f68cdd634913e74298a2e5333356daec32db8cf2",
-  "e149a25bd60a8c9a2f5c71e6e4fa6906078850da6d8648ea22ea7c9964b4eb5a",
-  "062936663f56cedc2c390b0555827c9c4c6b2a0f8b50ee02ae6ac97237362237",
-  "c6547ddf86ce30dce33f0411b06429d22fd29ab2deddd3ee18c9eb42000c1d1a",
-  "bc498672952aea8d3e16dfe841f961ab85cc1554805c7a4a2ee0f03625958ae4",
-  "8580c9403458b1faa95af2e47647d669dbceead0adfbdf20aec1c92624cfe9c4",
-  "9a1fe13340373fdf1fe4cab5f2f372be8e3f689a406c9ce3d615ce29aa3ca3a7",
-  "9dcea2a13807bf5bb36891f12cef9595796d008aee4a8cd82ee76f349da37d81",
-  "b18399b6d32b2fa7bb405f2de8850645ae10fd561b1ce5a14f3ac3e6377747f4",
-  "a9636ff97cf4597898ecff8e529d42bf4e8a90c25ff46d00b5cb73e1926e15d2",
-  "d46522ff7d5df19b4b8e0267c6c204a5e9e104bd334f1169940bfc23dd4e841d",
-  "6de0316a3e7cab10e8f9ba180f41a5b85e16af91c15086711fa142dce5e69af8",
-  "c7c35457daf3e3578c252c5ace167b59cd52c0b115f59f7a521d2c7b5d5be715",
-  "2f30db2999f98ce123a21489c1230f5a5fc2b6ba2f2a06dc35b274e045e89d48",
-  "14ec9096a287eb91abf686d556ab9794d6fd6f7a32506ca023eb32956fc97b02",
-  "7ce8332ba3f2b5733a1b7698382b2ff4df3d74c57e7930d9a50fc664dd0bd144",
-  "1bb9d78996738376b2aa36273a32c843cecc7fa937166a34b56ef29c7ad9dee9",
-  "5405a0d696ffef457f3f72b96ef2edcee2da95e0a21c338620625eb26aa6e3ec",
-  "6c523fe89c46df4bfdc0fc89c471d63cb427c4a66602e1960a9688b2cfae622e",
-  "bb3b4e99812956bc0c9fc8041a1c51af7103340a8d0c8a1a31e4b022899fa3e3",
-  "c7ffddd254dd02a602e082d6f40efdabf00bb43fb30b48eaa7e20008f00ea309",
-  "fd5bb080c3b4ae67fb91de5cfded883606315b7b3ab43541429ce10b39b46225",
-  "5004a5bbcc83a54a798e1978b687af4754697a66adfd6da068191b80b251c2f8",
-  "5b08c3abdb6dbf474290d3b673559c0d4830ae58a37524ef93bc7ce3d5a04dd0",
-  "f217ac10367d5d506b0c0260e54b10bd8c470e901c720d4107f52809d5853133",
-  "ac6a03be461a41fedcd3dd03c0df1009a7dc8ff0e9e78e6d350c9ce8d997ab73",
-  "84410edcc8d4d40045adde19ba9d499a75dd8947fb4ae15abb85d991ae560f6e",
-  "371ab23d5107fa8e9aa3b1d07824f63c853d2944f9ff164e6346ad3642a9dfcd",
-  "90507cd8d9844d262ba0896a476b049778fe00737d1b8eb4ac4d51da51b43d6d",
-  "14e9c1e48e26338db99cb2846e4b87b5a83b149e9b12c8a7c1cf2eb5100bf48e",
-  "d9dc1846013b6d1da28a0064e9d437df64bb503aaa415b9acd3b851fd0349cbd",
-  "6ac5b7c78d1138ad781d080bd9cf92126eeefcedb4c4bb81efca48841dfed25a",
-  "e383e0bbed774d702844bd219804f7552615e1b797cef4568a1e48a521d39a4d",
-  "dbe988ee6457d77785f25ec69a4c9c590ecb8ae371907ccefe1a44293c852a6d",
-  "0d4dcddb038634bb99aa0f528268d08ec1d51fd3e5d3bef48e33e571fd493f91",
-  "e473a1165dabfa54b068e4ae123caa75d133b59d52c9791cf5de430f672cfe28",
-  "917185e27673874bd9095b53b74b6991008cbefc0ebe70f6c54ba76a3377ff62",
-  "84f6c732ca1bcf619f1a83395225ef6b1f054f4dd08d40a82a46baec7fe24abf",
-  "3499d3100ca6c3cb1266ff30c7542f4bb493777bff5f7951d4c91e3ce0c5b74b",
-  "a0e5d4f8419af64bca2797ddcaed3f2130b00b9f7c786876ad734e5b8afce7a3",
-  "d14d88293c1393e42ecbb46d5cb19b823323a79b77120ca980685f568d5bfc3e",
-  "a9df36565bedf4b3823b25defd2e8518d4d069efef7e9311004ba992bc9fe53f",
-  "8476db3e85d6bbe93c1720b9ca01922df521e9117f720e3458e22597fc2f62b6",
-  "2a788c2b5f9d95893c3c73cb9d72ff8b79601f72558e1dd020e7df037576e487",
-  "f59aff1ad6ceb45cae7c6c869547ffa45f6cf69a1e299d7e9a84c99aa9e985cd",
-  "77c66b599050c72c5cc72985dc248875216377e7abb4889f69409216d7d5c4c7",
-  "8a7c4d33115991523030c221d70dd2ec79f46145872a75b4bc0f68df73ff1d74",
-  "99009f431c0c22896ed4d65404b3e0fe699c538dada8461da753492a97b1c283",
-  "c3266d47600a959c39c650336b615af047cb17c7148c768ab2400ace97aed27b",
-  "6cb6bcaa8ae8a9ebeea817dbabd8c09b28b2f2522d1354bbb6ece7c4b5243b45",
-  "083bc1336b4a2019c8eb2460dfdf1ab3f68badf15d0607ad4926399124430f0b",
-  "5320c9fa0325625f0f87c0c34097017dc794ae24db7295309eba4868afa3391e",
-  "8a1bf1cf8bb9592ed5cd1192c10d32cba301c954dc7c82bb858ec6921f4bd9c2",
-  "6a695644f09f3140e1a7cb1d73a36c94f41eb17c9bc7e9a295e23fddfc441086",
-  "18cb1ae42a68317e5b09d4e8131f028e8a256328bc65efc77866527380d7f798",
-  "dd9d727709e5b7b06ea5b8ee8e04279e093a1da3ce9835097878fb384190b78c",
-  "e9a7900b11f62745c0b5896bfa3f6b82511c3091949487154a3e6650d3ebcb4d",
-  "a07aee42b8bc813baf612687626cc3994a9515f1509cbbe0ad2aa1287c0bfcc7",
-  "0705ccadb15098dc8c1228446091bb76ffa85e8716cc363110ee4a6201c10b67",
-  "f5abc74ae0d38583e1fd10ceb557a5dc50de6d80ab015ee55ec7f03de9895f6c",
-  "4569a064a49838e558f1369516886a07f9ad7cfb85a48ab65e5fb594166edc57",
-  "7cfdf2587cfea97b45bdeee2df17d22ececabc4644402963517fd4ed0ec50ac1",
-  "cd8595b4f1d7fade94c3788d3821776ef5d847b04aff37d2723f364f9275203b",
-  "4196858ce693bf05804410166f02d32a435ae964ac12f3dd16d026d12934b0f0",
-  "3627c2c6ec5d48a45095aad7bfa37d0301ba71cf02bcf4a1eaf903e72714a3e9",
-  "e41f125ea66d24a90f226946389b6ca9c81af69125a7b297152db596f0650b08",
-  "291a179978b015083802db127136be26f994c91d015df74d8b838e180bda2bff",
-  "af0d89d9b0d68cacc5a0701a11d517c345aa316e6069aca0a2164b11eba7cab4",
-  "1bf97436264814d9c9d04291dc6065ce5ead86026ac8af13203d6539034c4c45",
-  "c4cf3b51ffda14e1c06b8e8773a3d87210426cba1abf0b319837171fd1af6b35",
-  "978d5cdb6dbec23abcf12ca5a49b1e98d365601927411e7ed9aacc58e7f83c74",
-  "65ddd6cdd8e825d1f32c5f73b00872a990669eaa3db35dd9b8219344a6c4113c",
-  "0a92463a084f72ef52ceea5962d5988ecca4451119a3d570c985c76b4c808d96",
-  "5a27f078331255c57e987b4d138b2434f39471ba80d64246b81f6df27b4d8216",
-  "3628eddaf9450d00176b27c25c17ac89fec35a17956f64a6b09f6a4866c40e0e",
-  "3cecc9ec865bd949b4f2434a13514b6f0b6272642f772ffe1833aa4abeb03309",
-  "95e02b36dd3b8ce7985f01d6f5910199c832cf6c1cec1e80705f6f769a886bcc",
-  "664b570e9f58e674498cba611e4d313707dd5c22b7dcd538c817f5b8eadf8fd9",
-  "91e9be69118761f0dfde55508e70bbe455e706c98d192a2a89fd67d80700c295",
-  "2ccfb23ed4c2bace234a5f2c22c09406b3c5d2056d031366c7dd8706520992dd",
-  "908d32e6b12916d70776b7310dc1097c8032fdeb8c12e6fd7d6942b9081eaf7b",
-  "6c729c209293d7280aa65ddeac9a326645ae12da8a004b412ed77cf73dca08b8",
-  "82d5ad4ca8dd12cbf938e528e54e991d2aa420b37d3803a6b78dfcc4f8286021",
-  "4d5a433112cd952f69774b0251baa250dfa5ac39ccdc04648d2752e3890bd41d",
-  "871ede09d8612b76dfbb1e76a8b1270d870a67f3f434cedc00a0fd41e8f41f90",
-  "df4128b9d598f3176cb89b9dcdaf20c407f37cbf2ed87fd1b9734154bfd9d946",
-  "2041ad939d270f9fb1b8c0ccb3857cea6dd2936331a190fab69889bf850c32d0",
-  "0582c1ed174bc05f566af333b24470b7ba3ec06925c905ade697e78bb22b2004",
-];
-
-function doActivate() {
-  const input = document.getElementById('actCode');
-  const raw = input.value.replace(/-/g, '').replace(/\s/g, '').toUpperCase();
-  const errEl = document.getElementById('actError');
-
-  if (raw.length !== 12) {
-    errEl.textContent = '激活码格式不正确，应为 12 位（XXXX-XXXX-XXXX）';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  // SHA256 hash via SubtleCrypto
-  const encoder = new TextEncoder();
-  crypto.subtle.digest('SHA-256', encoder.encode(raw)).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-    if (VALID_HASHES.includes(hashHex)) {
-      // Success
-      localStorage.setItem(ACT_KEY, raw);
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('homeMode').style.display = 'block';
-      initHome();
-    } else {
-      errEl.textContent = '激活码无效，请检查后重试';
-      errEl.style.display = 'block';
-      document.getElementById('btnActivate').textContent = '激活题库';
-      document.getElementById('btnActivate').disabled = false;
-    }
-  }).catch(() => {
-    errEl.textContent = '验证失败，请刷新页面后重试';
-    errEl.style.display = 'block';
-  });
-
-  // Show loading state
-  document.getElementById('btnActivate').textContent = '验证中...';
-  document.getElementById('btnActivate').disabled = true;
-  errEl.style.display = 'none';
-}
-
-function isActivated() {
-  const saved = localStorage.getItem(ACT_KEY);
-  if (!saved || saved.length !== 12) return false;
-  // Verify against hashes
-  const encoder = new TextEncoder();
-  return crypto.subtle ? true : false; // Will be verified async
-}
-
-// ==================== HOME ====================
-function initHome() {
-  document.getElementById('homeMode').style.display = 'block';
-  document.getElementById('quizMode').style.display = 'none';
-  document.getElementById('resultMode').style.display = 'none';
-
-  document.getElementById('baseUrl').value = loadHostUrl();
-
-  const grid = document.getElementById('chapterGrid');
-  const chapters = Object.values(QUESTION_BANK);
-  let totalQ = 0;
-  let html = '';
-
-  chapters.forEach(ch => {
-    totalQ += ch.count;
-    const types = countTypes(ch.questions);
-    const typeBadges = [];
-    if (types.single) typeBadges.push(`<span class="type-badge single">单选${types.single}</span>`);
-    if (types.multi) typeBadges.push(`<span class="type-badge multi">多选${types.multi}</span>`);
-    if (types.judge) typeBadges.push(`<span class="type-badge judge">判断${types.judge}</span>`);
-
-    html += `
-      <div class="chapter-card" onclick="startChapter('${escAttr(ch.name)}')">
-        <div class="ch-info">
-          <div class="ch-name">${escHtml(ch.name)}</div>
-          <div class="ch-meta">
-            <span>${ch.count} 题</span>
-            ${typeBadges.join(' ')}
-          </div>
-        </div>
-        <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();showQR('${escAttr(ch.name)}')" title="生成二维码">📱</span>
-      </div>`;
-  });
-
-  document.getElementById('homeSub').textContent = `共 ${chapters.length} 章 · ${totalQ} 题`;
-  grid.innerHTML = html;
-}
-
-function countTypes(qs) {
-  const c = {};
-  qs.forEach(q => { c[q.type] = (c[q.type] || 0) + 1; });
-  return c;
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escAttr(s) {
-  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ==================== HOST URL ====================
-function loadHostUrl() {
-  const saved = localStorage.getItem(URL_KEY) || '';
-  if (!saved && window.location.protocol.startsWith('http')) {
-    return window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
-  }
-  return saved;
-}
-
-function autoDetectUrl() {
-  if (window.location.protocol.startsWith('http')) {
-    const url = window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
-    document.getElementById('baseUrl').value = url;
-    localStorage.setItem(URL_KEY, url);
-  } else {
-    alert('当前为本地文件，请手动输入托管地址');
+    "quizCount": 25,
+    "totalCount": 29
   }
 }
-
-// ==================== CHAPTER → QUIZ ====================
-function startChapter(chName) {
-  const ch = QUESTION_BANK[chName];
-  if (!ch || !ch.questions || ch.questions.length === 0) return;
-
-  currentChapter = chName;
-  quizQuestions = [...ch.questions];
-  currentIndex = 0;
-  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
-  isRevealed = false;
-
-  document.getElementById('homeMode').style.display = 'none';
-  document.getElementById('quizMode').style.display = 'block';
-  document.getElementById('resultMode').style.display = 'none';
-  document.getElementById('quizTitle').textContent = chName;
-
-  renderQuestion();
-}
-
-function toggleShuffle() {
-  quizQuestions = shuffleArray([...quizQuestions]);
-  currentIndex = 0;
-  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
-  isRevealed = false;
-  document.getElementById('btnShuffle').textContent = '✅';
-  setTimeout(() => { document.getElementById('btnShuffle').textContent = '🔀'; }, 600);
-  renderQuestion();
-}
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// ==================== RENDER QUESTION ====================
-function renderQuestion() {
-  const q = quizQuestions[currentIndex];
-  const total = quizQuestions.length;
-
-  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + total;
-  document.getElementById('progressBar').style.width = (currentIndex / total * 100) + '%';
-
-  const optLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-  const userAns = userAnswers[currentIndex];
-  const isMulti = q.type === 'multi';
-
-  let tagClass = 'tag-single', tagText = '单选题';
-  if (q.type === 'multi') { tagClass = 'tag-multi'; tagText = '多选题（多选）'; }
-  if (q.type === 'judge') { tagClass = 'tag-judge'; tagText = '判断题'; }
-  if (q.type === 'calc') { tagClass = 'tag-calc'; tagText = '计算分析题'; }
-
-  // Calc questions: display-only mode
-  if (q.type === 'calc') {
-    const body = document.getElementById('quizBody');
-    body.innerHTML = `
-      <div class="question-card star-pop">
-        <span class="q-type-tag tag-calc">计算分析题</span>
-        <div class="q-title">${currentIndex + 1}. ${escHtml(q.q)}</div>
-        <div style="background:#fdf2f8;border-radius:10px;padding:16px;margin-top:12px;font-size:13px;color:#9d174d;line-height:1.6">
-          💡 本题为计算分析题，请自行计算后核对答案。
-        </div>
-      </div>`;
-    document.getElementById('btnSkip').style.display = 'inline-block';
-    const confirmBtn = document.getElementById('btnConfirmMulti');
-    if (confirmBtn) confirmBtn.style.display = 'none';
-    const nextBtn = document.getElementById('btnNext');
-    nextBtn.style.display = 'inline-block';
-    nextBtn.disabled = false;
-    nextBtn.textContent = currentIndex < total - 1 ? '下一题 →' : '查看结果 📊';
-    document.querySelector('.quiz-body').scrollIntoView({ behavior: 'smooth' });
-    return;
-  }
-
-  const isAnswered = isMulti ? isRevealed : (userAns !== -1);
-
-  let optionsHtml = q.o.map((opt, oi) => {
-    let cls = '';
-    if (isAnswered) {
-      if (isMulti) {
-        const correctIndices = Array.isArray(q.a) ? q.a : [q.a];
-        const selectedIndices = Array.isArray(userAns) ? userAns : [];
-        if (correctIndices.includes(oi) && selectedIndices.includes(oi)) cls = 'correct';
-        else if (!correctIndices.includes(oi) && selectedIndices.includes(oi)) cls = 'wrong';
-        else if (correctIndices.includes(oi) && !selectedIndices.includes(oi)) cls = 'correct';
-      } else {
-        if (oi === q.a) cls = 'correct';
-        else if (oi === userAns && oi !== q.a) cls = 'wrong';
-      }
-    } else if (isMulti) {
-      if (Array.isArray(userAns) && userAns.includes(oi)) cls = 'selected';
-    } else {
-      if (oi === userAns) cls = 'selected';
-    }
-
-    return `<div class="option-item ${cls}" onclick="${isMulti ? `toggleMulti(${oi})` : `selectAnswer(${oi})`}" ${isAnswered ? 'disabled' : ''}>
-      <div class="opt-indicator">${optLabels[oi]}</div>
-      <span>${escHtml(opt)}</span>
-    </div>`;
-  }).join('');
-
-  // Feedback
-  let feedbackHtml = '';
-  if (isAnswered) {
-    if (isMulti) {
-      const correctIndices = Array.isArray(q.a) ? q.a : [q.a];
-      const selectedIndices = Array.isArray(userAns) ? userAns : [];
-      const isCorrect = arraysEqual([...correctIndices].sort(), [...selectedIndices].sort());
-      const correctLetters = correctIndices.map(i => optLabels[i]).join('');
-      feedbackHtml = `<div class="feedback ${isCorrect ? 'ok' : 'bad'}">
-        ${isCorrect ? '✓ 回答正确！' : '✗ 正确答案是 ' + correctLetters}
-      </div>`;
-    } else {
-      feedbackHtml = `<div class="feedback ${userAns === q.a ? 'ok' : 'bad'}">
-        ${userAns === q.a ? '✓ 回答正确！' : '✗ 正确答案是 ' + optLabels[q.a]}
-      </div>`;
-    }
-  }
-
-  const body = document.getElementById('quizBody');
-  body.innerHTML = `
-    <div class="question-card star-pop ${isMulti ? 'multi-mode' : ''}">
-      <span class="q-type-tag ${tagClass}">${tagText}</span>
-      <div class="q-title">${currentIndex + 1}. ${escHtml(q.q)}</div>
-      ${optionsHtml}
-      ${feedbackHtml}
-    </div>`;
-
-  // Update buttons
-  document.getElementById('btnSkip').style.display = isAnswered ? 'none' : 'inline-block';
-
-  if (isMulti && !isRevealed) {
-    // Show confirm button for multi-select
-    const nav = document.querySelector('.quiz-nav');
-    const confirmBtn = document.getElementById('btnConfirmMulti');
-    if (!confirmBtn) {
-      const btn = document.createElement('button');
-      btn.id = 'btnConfirmMulti';
-      btn.className = 'btn-confirm';
-      btn.textContent = '确认答案 ✓';
-      btn.onclick = confirmMultiAnswer;
-      nav.insertBefore(btn, document.getElementById('btnNext'));
-    }
-    document.getElementById('btnConfirmMulti').style.display = 'inline-block';
-    document.getElementById('btnNext').style.display = 'none';
-  } else {
-    const confirmBtn = document.getElementById('btnConfirmMulti');
-    if (confirmBtn) confirmBtn.style.display = 'none';
-    const nextBtn = document.getElementById('btnNext');
-    nextBtn.style.display = isAnswered ? 'inline-block' : 'none';
-    nextBtn.disabled = !isAnswered;
-    nextBtn.textContent = currentIndex < total - 1 ? '下一题 →' : '查看结果 📊';
-  }
-
-  document.querySelector('.quiz-body').scrollIntoView({ behavior: 'smooth' });
-}
-
-function arraysEqual(a, b) {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) return false; }
-  return true;
-}
-
-// ==================== ANSWER HANDLING ====================
-function selectAnswer(oi) {
-  if (isRevealed) return;
-  const q = quizQuestions[currentIndex];
-  if (q.type === 'multi') return; // handled by toggleMulti
-  userAnswers[currentIndex] = oi;
-  isRevealed = true;
-  renderQuestion();
-
-  // Auto-advance if correct
-  if (oi === q.a) {
-    setTimeout(() => advanceOrFinish(), 800);
-  }
-}
-
-function toggleMulti(oi) {
-  if (isRevealed) return;
-  if (!Array.isArray(userAnswers[currentIndex])) {
-    userAnswers[currentIndex] = [];
-  }
-  const arr = userAnswers[currentIndex];
-  const idx = arr.indexOf(oi);
-  if (idx >= 0) arr.splice(idx, 1);
-  else arr.push(oi);
-  renderQuestion();
-}
-
-function confirmMultiAnswer() {
-  if (isRevealed) return;
-  isRevealed = true;
-  renderQuestion();
-}
-
-function skipQuestion() {
-  const q = quizQuestions[currentIndex];
-  if (q.type === 'multi') {
-    userAnswers[currentIndex] = [];
-  } else {
-    userAnswers[currentIndex] = -1;
-  }
-  isRevealed = false;
-  advanceOrFinish();
-}
-
-function nextQuestion() {
-  isRevealed = false;
-  advanceOrFinish();
-}
-
-function advanceOrFinish() {
-  if (currentIndex < quizQuestions.length - 1) {
-    currentIndex++;
-    isRevealed = false;
-    renderQuestion();
-  } else {
-    showResult();
-  }
-}
-
-// ==================== RESULT ====================
-function showResult() {
-  document.getElementById('quizMode').style.display = 'none';
-  document.getElementById('resultMode').style.display = 'block';
-
-  const total = quizQuestions.length;
-  let correct = 0, wrong = 0, skipped = 0, calcCount = 0;
-  const optLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
-  const wrongList = [];
-  const quizTotal = quizQuestions.filter(q => q.type !== 'calc').length;
-
-  quizQuestions.forEach((q, i) => {
-    const ua = userAnswers[i];
-    if (q.type === 'calc') {
-      calcCount++;
-      return;
-    }
-    if (q.type === 'multi') {
-      if (!Array.isArray(ua) || ua.length === 0) { skipped++; wrongList.push({i, skipped: true}); return; }
-      const correctSet = [...(Array.isArray(q.a) ? q.a : [q.a])].sort();
-      const userSet = [...ua].sort();
-      if (arraysEqual(correctSet, userSet)) correct++;
-      else { wrong++; wrongList.push({i, skipped: false}); }
-    } else {
-      if (ua === -1) { skipped++; wrongList.push({i, skipped: true}); return; }
-      if (ua === q.a) correct++;
-      else { wrong++; wrongList.push({i, skipped: false}); }
-    }
-  });
-
-  const pct = quizTotal > 0 ? Math.round(correct / quizTotal * 100) : 0;
-
-  let html = `
-    <div class="big-score star-pop">${pct}%</div>
-    <div class="score-label">正确率（不含计算题）</div>
-    <div class="result-stats">
-      <div class="stat-card ok"><div class="stat-val">${correct}</div><div class="stat-lbl">正确</div></div>
-      <div class="stat-card bad"><div class="stat-val">${wrong}</div><div class="stat-lbl">错误</div></div>
-      <div class="stat-card"><div class="stat-val">${skipped}</div><div class="stat-lbl">跳过</div></div>
-      ${calcCount > 0 ? `<div class="stat-card"><div class="stat-val">${calcCount}</div><div class="stat-lbl">计算题</div></div>` : ''}
-      <div class="stat-card"><div class="stat-val">${quizTotal}</div><div class="stat-lbl">答题总计</div></div>
-    </div>`;
-
-  // Wrong questions review
-  if (wrongList.length > 0) {
-    html += `<h4 style="margin-bottom:10px">📝 错题/未答回顾</h4><div class="review-list">`;
-    wrongList.forEach(w => {
-      const q = quizQuestions[w.i];
-      const ua = userAnswers[w.i];
-      if (q.type === 'multi') {
-        const correctLetters = (Array.isArray(q.a) ? q.a : [q.a]).map(i => optLabels[i]).join(', ');
-        const userLetters = (Array.isArray(ua) ? ua : []).map(i => optLabels[i]).join(', ') || '(未答)';
-        html += `<div class="review-item">
-          <div class="ri-q">${w.i + 1}. ${escHtml(q.q)}</div>
-          <div class="ri-your">你的答案：${userLetters}</div>
-          <div class="ri-a">正确答案：${correctLetters}</div>
-        </div>`;
-      } else {
-        html += `<div class="review-item">
-          <div class="ri-q">${w.i + 1}. ${escHtml(q.q)}</div>
-          <div class="ri-your">你的答案：${ua !== -1 ? optLabels[ua] + '. ' + escHtml(q.o[ua] || '') : '(未答)'}</div>
-          <div class="ri-a">正确答案：${optLabels[q.a]}. ${escHtml(q.o[q.a] || '')}</div>
-        </div>`;
-      }
-    });
-    html += `</div>`;
-  }
-
-  html += `
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn-next" onclick="retryWrong()" style="flex:none;padding:10px 20px;border-radius:8px;border:none;background:#f3f4f6;color:#6b7280;font-size:14px;font-weight:600;cursor:pointer" ${wrong === 0 ? 'disabled' : ''}>🔄 重做错题 (${wrong})</button>
-      <button class="btn-next" onclick="retryAll()" style="flex:none;padding:10px 20px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer">🔀 重新开始</button>
-    </div>
-    <div style="margin-top:12px">
-      <button onclick="backToHome()" style="background:none;border:none;color:var(--sub);cursor:pointer;font-size:14px">← 返回章节列表</button>
-    </div>`;
-
-  document.getElementById('resultContent').innerHTML = html;
-  document.getElementById('resultContent').scrollIntoView({ behavior: 'smooth' });
-}
-
-function retryWrong() {
-  const wrongQs = quizQuestions.filter((q, i) => {
-    const ua = userAnswers[i];
-    if (q.type === 'calc') return false;
-    if (q.type === 'multi') {
-      if (!Array.isArray(ua) || ua.length === 0) return true;
-      const correctSet = [...(Array.isArray(q.a) ? q.a : [q.a])].sort();
-      return !arraysEqual(correctSet, [...ua].sort());
-    }
-    return ua === -1 || ua !== q.a;
-  });
-  if (wrongQs.length === 0) return;
-  quizQuestions = shuffleArray(wrongQs);
-  currentIndex = 0;
-  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
-  isRevealed = false;
-
-  document.getElementById('resultMode').style.display = 'none';
-  document.getElementById('quizMode').style.display = 'block';
-  document.getElementById('quizTitle').textContent = (currentChapter || '刷题') + ' · 错题重做';
-  renderQuestion();
-}
-
-function retryAll() {
-  quizQuestions = shuffleArray([...quizQuestions]);
-  currentIndex = 0;
-  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
-  isRevealed = false;
-
-  document.getElementById('resultMode').style.display = 'none';
-  document.getElementById('quizMode').style.display = 'block';
-  renderQuestion();
-}
-
-function backToHome() {
-  document.getElementById('quizMode').style.display = 'none';
-  document.getElementById('resultMode').style.display = 'none';
-  initHome();
-}
-
-// ==================== QR CODE ====================
-function showMainQR() {
-  const hostUrl = document.getElementById('baseUrl').value.trim();
-  if (!hostUrl) {
-    alert('请先填写托管地址');
-    return;
-  }
-  const cleanUrl = hostUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
-  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(cleanUrl);
-  document.getElementById('qrOverlay').style.display = 'flex';
-  document.getElementById('qrChapterTitle').textContent = '财务管理 · 全部章节';
-  document.getElementById('qrImage').src = qrApiUrl;
-  document.getElementById('qrUrlText').textContent = cleanUrl;
-  document.getElementById('qrHint').textContent = '共 9 章 · 163 题 · 扫码选择章节刷题';
-}
-
-function showQR(chName) {
-  const hostUrl = document.getElementById('baseUrl').value.trim();
-  if (!hostUrl) {
-    alert('请先填写托管地址（此 HTML 文件的完整 URL），例如：\nhttps://yourname.github.io/quiz-app.html');
-    return;
-  }
-
-  const cleanUrl = hostUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
-  const ch = QUESTION_BANK[chName];
-  if (!ch) return;
-
-  // Encode chapter name for URL
-  const encodedChapter = encodeURIComponent(chName);
-  const fullUrl = cleanUrl + '#chapter=' + encodedChapter;
-  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(fullUrl);
-
-  document.getElementById('qrOverlay').style.display = 'flex';
-  document.getElementById('qrChapterTitle').textContent = chName;
-  document.getElementById('qrImage').src = qrApiUrl;
-  document.getElementById('qrUrlText').textContent = fullUrl;
-  document.getElementById('qrHint').textContent = `共 ${ch.count} 题 · 微信/浏览器扫码即可刷题`;
-}
-
-function downloadQR() {
-  const img = document.getElementById('qrImage');
-  const chName = document.getElementById('qrChapterTitle').textContent;
-  // Use canvas to download (avoids CORS issues)
-  const canvas = document.createElement('canvas');
-  canvas.width = img.naturalWidth || 300;
-  canvas.height = img.naturalHeight || 300;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  const link = document.createElement('a');
-  link.download = chName + '_二维码.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-function closeQR() {
-  document.getElementById('qrOverlay').style.display = 'none';
-}
-
-// ==================== INIT ====================
-function init() {
-  // Check activation first
-  const savedCode = localStorage.getItem(ACT_KEY);
-  if (savedCode && savedCode.length === 12) {
-    // Verify async
-    const encoder = new TextEncoder();
-    crypto.subtle.digest('SHA-256', encoder.encode(savedCode)).then(hashBuffer => {
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      if (VALID_HASHES.includes(hashHex)) {
-        // Valid activation → proceed
-        document.getElementById('lockScreen').style.display = 'none';
-        proceedAfterActivation();
-      } else {
-        // Invalid → show lock
-        localStorage.removeItem(ACT_KEY);
-        document.getElementById('lockScreen').style.display = 'block';
-      }
-    }).catch(() => {
-      // crypto not available → fallback to localStorage trust
-      document.getElementById('lockScreen').style.display = 'none';
-      proceedAfterActivation();
-    });
-  } else {
-    // Not activated → show lock
-    document.getElementById('lockScreen').style.display = 'block';
-  }
-}
-
-function proceedAfterActivation() {
-  document.getElementById('lockScreen').style.display = 'none';
-  document.getElementById('homeMode').style.display = 'block';
-
-  // Check if loaded via QR code (hash #chapter=X)
-  const hash = window.location.hash.slice(1);
-  if (hash.startsWith('chapter=')) {
-    const chName = decodeURIComponent(hash.slice(8));
-    if (QUESTION_BANK[chName]) {
-      if (window.location.protocol.startsWith('http')) {
-        const url = window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
-        localStorage.setItem(URL_KEY, url);
-      }
-      initHome();
-      startChapter(chName);
-      return;
-    }
-  }
-
-  // Check old-style base64 encoded questions in hash
-  if (hash && hash.length > 10 && !hash.startsWith('chapter=')) {
-    const decoded = tryDecodeLegacy(hash);
-    if (decoded && decoded.length > 0) {
-      currentChapter = '自定义题目';
-      quizQuestions = shuffleArray(decoded.map(q => ({
-        ...q,
-        type: q.type || 'single',
-        o: q.o || ['', '', '', ''],
-        a: q.a || 0
-      })));
-      currentIndex = 0;
-      userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
-      isRevealed = false;
-      document.getElementById('homeMode').style.display = 'none';
-      document.getElementById('quizMode').style.display = 'block';
-      document.getElementById('quizTitle').textContent = '自定义题目';
-      renderQuestion();
-      return;
-    }
-  }
-
-  initHome();
-}
-
-function tryDecodeLegacy(b64url) {
-  try {
-    let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
-    while (b64.length % 4) b64 += '=';
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return JSON.parse(new TextDecoder().decode(bytes));
-  } catch { return null; }
-}
-
-init();
-</script>
-</body>
-</html>
