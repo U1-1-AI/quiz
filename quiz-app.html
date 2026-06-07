@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刷题练习</title>
+<style>
+:root {
+  --bg: #f5f5f5;
+  --card: #fff;
+  --text: #1a1a1a;
+  --sub: #666;
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --correct: #16a34a;
+  --wrong: #dc2626;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ========== Generator Mode ========== */
+.generator-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+.generator-wrap h1 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.generator-wrap .subtitle {
+  text-align: center;
+  color: var(--sub);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.url-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.url-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.url-row input:focus { border-color: var(--accent); }
+.url-row button {
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label .count { color: var(--sub); font-weight: 400; font-size: 12px; }
+
+.question-editor {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.question-editor .q-num {
+  font-size: 12px;
+  color: var(--sub);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.q-num .del-btn {
+  background: none;
+  border: none;
+  color: var(--wrong);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 6px;
+  line-height: 1;
+}
+.question-editor textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 44px;
+  font-family: inherit;
+  outline: none;
+}
+.question-editor textarea:focus { border-color: var(--accent); }
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.option-row.selected { border-color: var(--accent); background: var(--accent-light); }
+.option-row .opt-letter {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.option-row.selected .opt-letter { background: var(--accent); color: #fff; }
+.option-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  outline: none;
+  padding: 4px 0;
+  font-family: inherit;
+}
+
+.btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-outline { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+.btn-ghost { background: transparent; color: var(--sub); }
+
+.qr-result {
+  margin-top: 24px;
+  text-align: center;
+  display: none;
+}
+.qr-result.show { display: block; }
+.qr-result img {
+  max-width: 280px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.qr-result .qr-url {
+  font-size: 11px;
+  color: var(--sub);
+  word-break: break-all;
+  margin-top: 8px;
+  background: #f9fafb;
+  padding: 8px;
+  border-radius: 6px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.qr-result .qr-hint {
+  font-size: 12px;
+  color: var(--sub);
+  margin-top: 8px;
+}
+.qr-warn {
+  color: #d97706;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ========== Quiz Mode ========== */
+.quiz-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz-topbar {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--sub);
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.quiz-topbar .progress-text { font-weight: 600; color: var(--text); }
+
+.progress-bar-wrap {
+  height: 4px;
+  background: var(--border);
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width .3s;
+}
+
+.quiz-body {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.question-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.question-card .q-title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+  color: var(--text);
+}
+.option-btn:active { transform: scale(0.98); }
+.option-btn.correct {
+  border-color: var(--correct);
+  background: #f0fdf4;
+  color: var(--correct);
+}
+.option-btn.wrong {
+  border-color: var(--wrong);
+  background: #fef2f2;
+  color: var(--wrong);
+}
+.option-btn:disabled { pointer-events: none; }
+
+.feedback {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 12px 0;
+  min-height: 24px;
+}
+.feedback.correct-fb { color: var(--correct); }
+.feedback.wrong-fb { color: var(--wrong); }
+
+.quiz-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+.quiz-nav button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+.btn-next { background: var(--accent); color: #fff; }
+.btn-next:disabled { background: #c7d2fe; }
+.btn-skip { background: #f3f4f6; color: #6b7280; }
+
+.quiz-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--sub);
+}
+.quiz-empty .emoji { font-size: 48px; margin-bottom: 16px; }
+
+/* ========== Result Screen ========== */
+.result-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+.result-wrap .big-score {
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.result-wrap .score-label {
+  font-size: 14px;
+  color: var(--sub);
+  margin-bottom: 24px;
+}
+.result-stats {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.stat-card .stat-val { font-size: 24px; font-weight: 700; }
+.stat-card .stat-lbl { font-size: 12px; color: var(--sub); }
+.stat-card.green .stat-val { color: var(--correct); }
+.stat-card.red .stat-val { color: var(--wrong); }
+
+.review-list {
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto 24px;
+}
+.review-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+.review-item .ri-q { font-weight: 600; margin-bottom: 4px; }
+.review-item .ri-a { color: var(--correct); font-size: 13px; }
+.review-item .ri-your { color: var(--wrong); font-size: 13px; }
+
+/* ========== Star animation ========== */
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.star-pop { animation: popIn .4s ease-out; }
+
+@media (max-width: 400px) {
+  .options-grid { grid-template-columns: 1fr; }
+  .question-card { padding: 16px 14px; }
+  .question-card .q-title { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== GENERATOR MODE ==================== -->
+<div id="generatorMode" style="display:none">
+<div class="generator-wrap">
+  <h1>📋 习题二维码生成器</h1>
+  <p class="subtitle">输入题目 → 生成二维码 → 扫码即可刷题</p>
+
+  <div class="url-row">
+    <input type="text" id="baseUrl" placeholder="你的托管地址，如 https://xx.github.io/quiz-app.html" />
+    <button onclick="saveBaseUrl()">保存</button>
+  </div>
+  <div style="font-size:11px;color:var(--sub);margin:-8px 0 16px">
+    将此 HTML 文件托管到任意静态服务器（GitHub Pages / Vercel / Netlify），在此填入完整 URL
+  </div>
+
+  <div class="section-label">📝 题目列表 <span class="count" id="qCount">0 题</span></div>
+  <div id="questionsContainer"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="addQuestion()">+ 添加题目</button>
+    <button class="btn btn-outline" onclick="addSampleQuestions()">📥 填入示例</button>
+    <button class="btn btn-primary" onclick="generateQR()">🔳 生成二维码</button>
+    <button class="btn btn-ghost" onclick="clearAll()">清空</button>
+  </div>
+
+  <div class="qr-result" id="qrResult">
+    <h3 style="margin-bottom:12px">扫描二维码开始刷题</h3>
+    <img id="qrImage" alt="QR Code" />
+    <div class="qr-url" id="qrUrlText"></div>
+    <div class="qr-hint" id="qrHint"></div>
+    <div class="qr-warn" id="qrWarn"></div>
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" onclick="previewQuiz()">👁 预览刷题界面</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== QUIZ MODE ==================== -->
+<div id="quizMode" style="display:none">
+<div class="quiz-wrap">
+  <div class="quiz-topbar">
+    <span id="quizTitle">刷题练习</span>
+    <span class="progress-text" id="progressText">1/10</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="quiz-body" id="quizBody"></div>
+  <div style="padding:0 16px 24px">
+    <div class="quiz-nav">
+      <button class="btn-skip" id="btnSkip" onclick="skipQuestion()" style="display:none">跳过</button>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>下一题 →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== RESULT MODE ==================== -->
+<div id="resultMode" style="display:none">
+<div class="result-wrap" id="resultContent"></div>
+</div>
+
+<!-- ==================== EMPTY STATE ==================== -->
+<div id="emptyState" style="display:none">
+<div class="quiz-wrap">
+  <div class="quiz-body">
+    <div class="quiz-empty">
+      <div class="emoji">📭</div>
+      <p>没有题目数据</p>
+      <p style="font-size:13px;margin-top:4px">请通过正确的二维码或链接访问</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ==================== DATA STORE ====================
+const STORAGE_KEY = 'quiz_questions';
+const URL_KEY = 'quiz_base_url';
+
+function loadQuestions() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function saveQuestions(qs) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(qs));
+}
+
+function loadBaseUrl() {
+  // Auto-detect if already hosted
+  const saved = localStorage.getItem(URL_KEY) || '';
+  if (!saved && window.location.protocol.startsWith('http')) {
+    return window.location.href.replace(/#.*$/, '');
+  }
+  return saved;
+}
+
+function saveBaseUrl() {
+  const url = document.getElementById('baseUrl').value.trim();
+  localStorage.setItem(URL_KEY, url);
+  alert('已保存托管地址');
+}
+
+// ==================== GENERATOR ====================
+let questions = [];
+
+function renderGenerator() {
+  document.getElementById('generatorMode').style.display = 'block';
+  document.getElementById('quizMode').style.display = 'none';
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'none';
+
+  questions = loadQuestions();
+  document.getElementById('baseUrl').value = loadBaseUrl();
+  renderQuestionList();
+}
+
+function renderQuestionList() {
+  const container = document.getElementById('questionsContainer');
+  const countEl = document.getElementById('qCount');
+  countEl.textContent = questions.length + ' 题';
+
+  if (questions.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--sub);padding:32px">还没有题目，点击下方按钮添加</div>';
+    return;
+  }
+
+  container.innerHTML = questions.map((q, qi) => `
+    <div class="question-editor">
+      <div class="q-num">
+        <span>第 ${qi + 1} 题</span>
+        <button class="del-btn" onclick="deleteQuestion(${qi})" title="删除">×</button>
+      </div>
+      <textarea placeholder="输入题目内容..." onchange="updateQuestion(${qi},'q',this.value)">${escapeHtml(q.q)}</textarea>
+      <div class="options-grid">
+        ${['A','B','C','D'].map((ltr, oi) => `
+          <div class="option-row${q.a === oi ? ' selected' : ''}" onclick="setAnswer(${qi},${oi})">
+            <span class="opt-letter">${ltr}</span>
+            <input placeholder="选项 ${ltr}" value="${escapeHtml((q.o && q.o[oi]) || '')}" onchange="updateOption(${qi},${oi},this.value)" onclick="event.stopPropagation()" />
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function addQuestion() {
+  questions.push({ q: '', o: ['', '', '', ''], a: 0 });
+  saveQuestions(questions);
+  renderQuestionList();
+}
+
+function deleteQuestion(i) {
+  questions.splice(i, 1);
+  saveQuestions(questions);
+  renderQuestionList();
+}
+
+function updateQuestion(i, field, value) {
+  questions[i][field] = value;
+  saveQuestions(questions);
+}
+
+function updateOption(qi, oi, value) {
+  if (!questions[qi].o) questions[qi].o = ['', '', '', ''];
+  questions[qi].o[oi] = value;
+  saveQuestions(questions);
+}
+
+function setAnswer(qi, oi) {
+  questions[qi].a = oi;
+  saveQuestions(questions);
+  renderQuestionList();
+}
+
+function clearAll() {
+  if (confirm('确定清空所有题目？')) {
+    questions = [];
+    saveQuestions(questions);
+    document.getElementById('qrResult').classList.remove('show');
+    renderQuestionList();
+  }
+}
+
+function addSampleQuestions() {
+  questions = [
+    { q: 'HTML 的全称是什么？', o: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyper Transfer Markup Language', 'Home Tool Markup Language'], a: 0 },
+    { q: 'CSS 中 "C" 代表什么？', o: ['Computer', 'Creative', 'Cascading', 'Colorful'], a: 2 },
+    { q: 'JavaScript 中 typeof null 的结果是？', o: ['null', 'undefined', 'object', 'boolean'], a: 2 },
+    { q: '以下哪个不是 JavaScript 的数据类型？', o: ['String', 'Boolean', 'Float', 'Symbol'], a: 2 },
+    { q: 'HTTP 状态码 404 表示什么？', o: ['服务器错误', '未找到', '重定向', '请求成功'], a: 1 },
+  ];
+  saveQuestions(questions);
+  renderQuestionList();
+}
+
+// ==================== ENCODING ====================
+function toBase64url(str) {
+  // UTF-8 safe base64url encoding
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function fromBase64url(b64url) {
+  let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function encodeQuestions(qs) {
+  const compact = qs.map(q => ({
+    q: q.q,
+    o: q.o || ['','','',''],
+    a: q.a
+  }));
+  return toBase64url(JSON.stringify(compact));
+}
+
+function decodeQuestions(str) {
+  try {
+    const json = fromBase64url(str);
+    const data = JSON.parse(json);
+    return data.map(q => ({
+      q: q.q || '',
+      o: q.o || ['','','',''],
+      a: typeof q.a === 'number' ? q.a : 0
+    }));
+  } catch (e) {
+    return null;
+  }
+}
+
+function generateQR() {
+  const valid = questions.filter(q => q.q.trim() && q.o.some(o => o.trim()));
+  if (valid.length === 0) {
+    alert('请至少添加一道完整的题目（含题目文本和至少一个选项）');
+    return;
+  }
+
+  const encoded = encodeQuestions(valid);
+  const baseUrl = document.getElementById('baseUrl').value.trim();
+
+  if (!baseUrl) {
+    alert('请先填写托管地址（此 HTML 文件的完整 URL）');
+    return;
+  }
+
+  // Build the full URL with questions in hash
+  const fullUrl = baseUrl.replace(/#.*$/, '') + '#' + encoded;
+  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=' + encodeURIComponent(fullUrl);
+
+  document.getElementById('qrResult').classList.add('show');
+  document.getElementById('qrImage').src = qrApiUrl;
+  document.getElementById('qrUrlText').textContent = fullUrl;
+  document.getElementById('qrHint').textContent = '共 ' + valid.length + ' 题 · 微信/浏览器扫码即可刷题';
+
+  // Warn if URL is very long (QR code might be hard to scan)
+  const warnEl = document.getElementById('qrWarn');
+  if (fullUrl.length > 2000) {
+    warnEl.textContent = '⚠ 题目较多，二维码可能较难扫描。建议减少题目数量。当前URL长度: ' + fullUrl.length + ' 字符';
+  } else if (fullUrl.length > 1000) {
+    warnEl.textContent = '💡 URL长度: ' + fullUrl.length + ' 字符，扫码可能稍慢，建议用浏览器扫码';
+  } else {
+    warnEl.textContent = '';
+  }
+
+  // Scroll to QR
+  document.getElementById('qrResult').scrollIntoView({ behavior: 'smooth' });
+}
+
+function previewQuiz() {
+  const valid = questions.filter(q => q.q.trim() && q.o.some(o => o.trim()));
+  if (valid.length === 0) return;
+  startQuiz(valid);
+}
+
+// ==================== QUIZ ENGINE ====================
+let quizQuestions = [];
+let currentIndex = 0;
+let userAnswers = []; // -1 = skipped, otherwise index of chosen option
+let quizTitle = '刷题练习';
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(qs) {
+  quizQuestions = shuffle(qs);
+  currentIndex = 0;
+  userAnswers = new Array(qs.length).fill(-1);
+  quizTitle = '刷题练习';
+
+  document.getElementById('generatorMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'block';
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('quizTitle').textContent = quizTitle;
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQuestions[currentIndex];
+  const total = quizQuestions.length;
+  const answered = userAnswers.filter(a => a !== -1).length;
+
+  document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + total;
+  document.getElementById('progressBar').style.width = ((currentIndex) / total * 100) + '%';
+
+  const body = document.getElementById('quizBody');
+  const optLabels = ['A', 'B', 'C', 'D'];
+  const userAns = userAnswers[currentIndex];
+  const isAnswered = userAns !== -1;
+
+  body.innerHTML = `
+    <div class="question-card star-pop">
+      <div class="q-title">${currentIndex + 1}. ${escapeHtml(q.q)}</div>
+      ${q.o.map((opt, oi) => {
+        let cls = '';
+        if (isAnswered) {
+          if (oi === q.a) cls = 'correct';
+          else if (oi === userAns && oi !== q.a) cls = 'wrong';
+        }
+        return `<button class="option-btn ${cls}" onclick="selectAnswer(${oi})" ${isAnswered ? 'disabled' : ''}>
+          <strong>${optLabels[oi]}.</strong> ${escapeHtml(opt || '(空)')}
+        </button>`;
+      }).join('')}
+      <div class="feedback ${isAnswered ? (userAns === q.a ? 'correct-fb' : 'wrong-fb') : ''}" id="feedback">
+        ${isAnswered ? (userAns === q.a ? '✓ 回答正确！' : '✗ 正确答案是 ' + optLabels[q.a]) : ''}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btnSkip').style.display = isAnswered ? 'none' : 'inline-block';
+  document.getElementById('btnNext').disabled = !isAnswered;
+  document.getElementById('btnNext').textContent = currentIndex < total - 1 ? '下一题 →' : '查看结果 📊';
+
+  // Scroll to top of card
+  document.querySelector('.quiz-body').scrollIntoView({ behavior: 'smooth' });
+}
+
+function selectAnswer(oi) {
+  if (userAnswers[currentIndex] !== -1) return;
+  userAnswers[currentIndex] = oi;
+
+  // Re-render to show correct/wrong
+  renderQuestion();
+
+  // Auto-advance after short delay if correct
+  if (oi === quizQuestions[currentIndex].a) {
+    setTimeout(() => {
+      if (currentIndex < quizQuestions.length - 1) {
+        nextQuestion();
+      }
+    }, 800);
+  }
+}
+
+function skipQuestion() {
+  userAnswers[currentIndex] = -1;
+  if (currentIndex < quizQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < quizQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizMode').style.display = 'none';
+  document.getElementById('resultMode').style.display = 'block';
+
+  const total = quizQuestions.length;
+  const correct = userAnswers.filter((a, i) => a === quizQuestions[i].a).length;
+  const wrong = userAnswers.filter((a, i) => a !== -1 && a !== quizQuestions[i].a).length;
+  const skipped = userAnswers.filter(a => a === -1).length;
+  const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+
+  const optLabels = ['A', 'B', 'C', 'D'];
+
+  document.getElementById('resultContent').innerHTML = `
+    <div class="big-score star-pop">${pct}%</div>
+    <div class="score-label">正确率</div>
+    <div class="result-stats">
+      <div class="stat-card green"><div class="stat-val">${correct}</div><div class="stat-lbl">正确</div></div>
+      <div class="stat-card red"><div class="stat-val">${wrong}</div><div class="stat-lbl">错误</div></div>
+      <div class="stat-card"><div class="stat-val">${skipped}</div><div class="stat-lbl">跳过</div></div>
+      <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">总计</div></div>
+    </div>
+
+    ${wrong > 0 ? `
+      <h4 style="margin-bottom:12px">📝 错题回顾</h4>
+      <div class="review-list">
+        ${quizQuestions.map((q, i) => {
+          if (userAnswers[i] === -1 || userAnswers[i] === q.a) return '';
+          return `<div class="review-item">
+            <div class="ri-q">${i + 1}. ${escapeHtml(q.q)}</div>
+            <div class="ri-your">你的答案：${optLabels[userAnswers[i]]}. ${escapeHtml(q.o[userAnswers[i]] || '')}</div>
+            <div class="ri-a">正确答案：${optLabels[q.a]}. ${escapeHtml(q.o[q.a] || '')}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    ` : ''}
+
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-outline" onclick="retryWrong()" ${wrong === 0 ? 'disabled' : ''}>🔄 重做错题 (${wrong})</button>
+      <button class="btn btn-primary" onclick="retryAll()">🔀 重新开始</button>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn btn-ghost" onclick="backToGenerator()">← 返回生成器</button>
+    </div>
+  `;
+
+  document.getElementById('resultContent').scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryWrong() {
+  const wrongQs = quizQuestions.filter((q, i) => userAnswers[i] !== -1 && userAnswers[i] !== q.a);
+  if (wrongQs.length === 0) return;
+  startQuiz(wrongQs);
+}
+
+function retryAll() {
+  startQuiz(quizQuestions);
+}
+
+function backToGenerator() {
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'none';
+  renderGenerator();
+}
+
+// ==================== INIT ====================
+function init() {
+  const hash = window.location.hash.slice(1);
+  if (hash && hash.length > 4) {
+    // Try to decode questions from hash
+    const decoded = decodeQuestions(hash);
+    if (decoded && decoded.length > 0) {
+      startQuiz(decoded);
+      return;
+    }
+  }
+
+  // Check for old localStorage data
+  const saved = loadQuestions();
+  if (saved.length > 0) {
+    questions = saved;
+  }
+
+  renderGenerator();
+}
+
+init();
+</script>
+</body>
+</html>
