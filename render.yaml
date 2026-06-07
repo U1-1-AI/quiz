@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: quiz-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app -w 1 -b 0.0.0.0:$PORT
+    envVars:
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: SECRET_KEY
+        generateValue: true
