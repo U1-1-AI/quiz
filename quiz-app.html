@@ -2768,6 +2768,17 @@ let userAnswers = [];   // single/judge: chosen index or -1; multi: array of ind
 let isRevealed = false;
 
 // ==================== ACTIVATION ====================
+const API_BASE = 'https://quiz-api-xxxx.onrender.com';  // TODO: 部署后替换为实际 Render 地址
+
+function getDeviceId() {
+  let id = localStorage.getItem('_device_id');
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substring(2,15) + Date.now().toString(36);
+    localStorage.setItem('_device_id', id);
+  }
+  return id;
+}
+
 const VALID_HASHES = [
   "d1dd369859147bdfb0320b8e542a5a26c517aeda7e989ebd61b013c75c3a7203",
   "fa0a2a82c543ad64a1667c1718e94a93ea7d2639a3fce412456022d066cb4a1a",
@@ -2975,6 +2986,7 @@ function doActivate() {
   const input = document.getElementById('actCode');
   const raw = input.value.replace(/-/g, '').replace(/\s/g, '').toUpperCase();
   const errEl = document.getElementById('actError');
+  const btn = document.getElementById('btnActivate');
 
   if (raw.length !== 12) {
     errEl.textContent = '激活码格式不正确，应为 12 位（XXXX-XXXX-XXXX）';
@@ -2982,33 +2994,60 @@ function doActivate() {
     return;
   }
 
-  // SHA256 hash via SubtleCrypto
-  const encoder = new TextEncoder();
-  crypto.subtle.digest('SHA-256', encoder.encode(raw)).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-    if (VALID_HASHES.includes(hashHex)) {
-      // Success
-      localStorage.setItem(ACT_KEY, raw);
-      document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('homeMode').style.display = 'block';
-      initHome();
-    } else {
-      errEl.textContent = '激活码无效，请检查后重试';
-      errEl.style.display = 'block';
-      document.getElementById('btnActivate').textContent = '激活题库';
-      document.getElementById('btnActivate').disabled = false;
-    }
-  }).catch(() => {
-    errEl.textContent = '验证失败，请刷新页面后重试';
-    errEl.style.display = 'block';
-  });
-
-  // Show loading state
-  document.getElementById('btnActivate').textContent = '验证中...';
-  document.getElementById('btnActivate').disabled = true;
+  btn.textContent = '验证中...';
+  btn.disabled = true;
   errEl.style.display = 'none';
+
+  const formatted = raw.slice(0,4) + '-' + raw.slice(4,8) + '-' + raw.slice(8,12);
+  const deviceId = getDeviceId();
+
+  // Try backend first (one-code-one-use)
+  fetch(API_BASE + '/api/activate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: formatted, device: deviceId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.token) {
+      // Backend activated successfully
+      localStorage.setItem(ACT_KEY, raw);
+      unlockScreen();
+    } else if (data.error) {
+      errEl.textContent = data.error;
+      errEl.style.display = 'block';
+      btn.textContent = '激活题库';
+      btn.disabled = false;
+    }
+  })
+  .catch(() => {
+    // Backend unreachable → fallback to local hash check
+    const encoder = new TextEncoder();
+    crypto.subtle.digest('SHA-256', encoder.encode(raw)).then(hashBuffer => {
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      if (VALID_HASHES.includes(hashHex)) {
+        localStorage.setItem(ACT_KEY, raw);
+        unlockScreen();
+      } else {
+        errEl.textContent = '激活码无效，请检查后重试';
+        errEl.style.display = 'block';
+        btn.textContent = '激活题库';
+        btn.disabled = false;
+      }
+    }).catch(() => {
+      errEl.textContent = '验证失败，请刷新后重试';
+      errEl.style.display = 'block';
+      btn.textContent = '激活题库';
+      btn.disabled = false;
+    });
+  });
+}
+
+function unlockScreen() {
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('homeMode').style.display = 'block';
+  initHome();
 }
 
 function isActivated() {
@@ -3495,31 +3534,50 @@ function closeQR() {
 
 // ==================== INIT ====================
 function init() {
-  // Check activation first
   const savedCode = localStorage.getItem(ACT_KEY);
-  if (savedCode && savedCode.length === 12) {
-    // Verify async
-    const encoder = new TextEncoder();
-    crypto.subtle.digest('SHA-256', encoder.encode(savedCode)).then(hashBuffer => {
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      if (VALID_HASHES.includes(hashHex)) {
-        // Valid activation → proceed
-        document.getElementById('lockScreen').style.display = 'none';
-        proceedAfterActivation();
-      } else {
-        // Invalid → show lock
-        localStorage.removeItem(ACT_KEY);
-        document.getElementById('lockScreen').style.display = 'block';
-      }
-    }).catch(() => {
-      // crypto not available → fallback to localStorage trust
+  const deviceId = getDeviceId();
+
+  // Try backend device check first
+  fetch(API_BASE + '/api/check-device', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ device: deviceId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.activated) {
       document.getElementById('lockScreen').style.display = 'none';
       proceedAfterActivation();
-    });
-  } else {
-    // Not activated → show lock
-    document.getElementById('lockScreen').style.display = 'block';
+      return;
+    }
+    // Not activated on backend, check local
+    checkLocalActivation();
+  })
+  .catch(() => {
+    // Backend unreachable, use local check
+    checkLocalActivation();
+  });
+
+  function checkLocalActivation() {
+    if (savedCode && savedCode.length === 12) {
+      const encoder = new TextEncoder();
+      crypto.subtle.digest('SHA-256', encoder.encode(savedCode)).then(hashBuffer => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        if (VALID_HASHES.includes(hashHex)) {
+          document.getElementById('lockScreen').style.display = 'none';
+          proceedAfterActivation();
+        } else {
+          localStorage.removeItem(ACT_KEY);
+          document.getElementById('lockScreen').style.display = 'block';
+        }
+      }).catch(() => {
+        document.getElementById('lockScreen').style.display = 'none';
+        proceedAfterActivation();
+      });
+    } else {
+      document.getElementById('lockScreen').style.display = 'block';
+    }
   }
 }
 
