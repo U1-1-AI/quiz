@@ -3,24 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>刷题练习</title>
+<title>财务管理刷题练习</title>
 <style>
 :root {
-  --bg: #f5f5f5;
+  --bg: #f0f2f5;
   --card: #fff;
   --text: #1a1a1a;
-  --sub: #666;
+  --sub: #888;
   --accent: #4f46e5;
   --accent-light: #eef2ff;
   --correct: #16a34a;
+  --correct-bg: #f0fdf4;
   --wrong: #dc2626;
+  --wrong-bg: #fef2f2;
   --border: #e5e7eb;
-  --radius: 12px;
-  --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -28,192 +30,94 @@ body {
   user-select: none;
 }
 
-/* ========== Generator Mode ========== */
-.generator-wrap {
-  max-width: 680px;
+/* ========== HOME / CHAPTER LIST ========== */
+.home-wrap {
+  max-width: 600px;
   margin: 0 auto;
-  padding: 24px 16px 60px;
+  padding: 32px 16px 60px;
 }
-.generator-wrap h1 {
+.home-header {
   text-align: center;
-  font-size: 22px;
+  margin-bottom: 28px;
+}
+.home-header h1 {
+  font-size: 24px;
+  font-weight: 700;
   margin-bottom: 4px;
 }
-.generator-wrap .subtitle {
-  text-align: center;
-  color: var(--sub);
+.home-header .subtitle {
   font-size: 13px;
-  margin-bottom: 24px;
+  color: var(--sub);
 }
-
-.url-row {
+.chapter-grid {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  gap: 10px;
 }
-.url-row input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-}
-.url-row input:focus { border-color: var(--accent); }
-.url-row button {
-  padding: 10px 18px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.section-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-label .count { color: var(--sub); font-weight: 400; font-size: 12px; }
-
-.question-editor {
+.chapter-card {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 16px 18px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  position: relative;
-}
-.question-editor .q-num {
-  font-size: 12px;
-  color: var(--sub);
-  margin-bottom: 8px;
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all .15s;
+  text-align: left;
 }
-.q-num .del-btn {
-  background: none;
-  border: none;
-  color: var(--wrong);
-  cursor: pointer;
-  font-size: 18px;
-  padding: 2px 6px;
-  line-height: 1;
+.chapter-card:active { transform: scale(0.98); background: #fafafa; }
+.chapter-card .ch-info { flex: 1; }
+.chapter-card .ch-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
 }
-.question-editor textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  resize: vertical;
-  min-height: 44px;
-  font-family: inherit;
-  outline: none;
-}
-.question-editor textarea:focus { border-color: var(--accent); }
-
-.options-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-top: 8px;
-}
-.option-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 6px 10px;
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-.option-row.selected { border-color: var(--accent); background: var(--accent-light); }
-.option-row .opt-letter {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.chapter-card .ch-meta {
   font-size: 12px;
-  font-weight: 700;
-  flex-shrink: 0;
+  color: var(--sub);
+  display: flex;
+  gap: 12px;
 }
-.option-row.selected .opt-letter { background: var(--accent); color: #fff; }
-.option-row input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 13px;
-  outline: none;
-  padding: 4px 0;
-  font-family: inherit;
+.chapter-card .ch-arrow { color: #ccc; font-size: 20px; }
+.type-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
 }
+.type-badge.single { background: #dbeafe; color: #2563eb; }
+.type-badge.multi { background: #fef3c7; color: #d97706; }
+.type-badge.judge { background: #ede9fe; color: #7c3aed; }
 
-.btn-row {
+/* ========== URL input bar ========== */
+.url-bar {
+  max-width: 600px;
+  margin: 0 auto 0;
+  padding: 0 16px;
   display: flex;
   gap: 8px;
-  margin-top: 16px;
-  flex-wrap: wrap;
+  align-items: center;
 }
-.btn {
-  padding: 10px 20px;
+.url-bar input {
+  flex: 1;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all .15s;
+  font-size: 13px;
+  outline: none;
+  background: var(--card);
 }
-.btn:active { transform: scale(0.97); }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-outline { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
-.btn-ghost { background: transparent; color: var(--sub); }
-
-.qr-result {
-  margin-top: 24px;
-  text-align: center;
-  display: none;
-}
-.qr-result.show { display: block; }
-.qr-result img {
-  max-width: 280px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-.qr-result .qr-url {
+.url-bar input:focus { border-color: var(--accent); }
+.url-bar .url-hint {
   font-size: 11px;
   color: var(--sub);
-  word-break: break-all;
-  margin-top: 8px;
-  background: #f9fafb;
-  padding: 8px;
-  border-radius: 6px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.qr-result .qr-hint {
-  font-size: 12px;
-  color: var(--sub);
-  margin-top: 8px;
-}
-.qr-warn {
-  color: #d97706;
-  font-size: 12px;
-  margin-top: 4px;
+  white-space: nowrap;
 }
 
-/* ========== Quiz Mode ========== */
+/* ========== QUIZ MODE ========== */
 .quiz-wrap {
   max-width: 500px;
   margin: 0 auto;
@@ -221,7 +125,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 .quiz-topbar {
   padding: 12px 16px;
   display: flex;
@@ -229,13 +132,20 @@ body {
   justify-content: space-between;
   font-size: 13px;
   color: var(--sub);
-  border-bottom: 1px solid var(--border);
   background: var(--card);
+  border-bottom: 1px solid var(--border);
 }
-.quiz-topbar .progress-text { font-weight: 600; color: var(--text); }
-
+.quiz-topbar .back-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text);
+  padding: 4px;
+  line-height: 1;
+}
 .progress-bar-wrap {
-  height: 4px;
+  height: 3px;
   background: var(--border);
 }
 .progress-bar-fill {
@@ -243,71 +153,110 @@ body {
   background: var(--accent);
   transition: width .3s;
 }
-
 .quiz-body {
   flex: 1;
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
+  padding: 20px 16px;
 }
 .question-card {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 24px 20px;
+  padding: 20px 18px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
-.question-card .q-title {
-  font-size: 17px;
+.question-card .q-type-tag {
+  font-size: 11px;
   font-weight: 600;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.q-type-tag.tag-single { background: #dbeafe; color: #2563eb; }
+.q-type-tag.tag-multi { background: #fef3c7; color: #d97706; }
+.q-type-tag.tag-judge { background: #ede9fe; color: #7c3aed; }
+.question-card .q-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+  margin-bottom: 18px;
 }
 
-.option-btn {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 14px 16px;
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
   margin-bottom: 8px;
   border: 2px solid var(--border);
   border-radius: 10px;
   background: #fff;
-  font-size: 15px;
   cursor: pointer;
+  transition: all .12s;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.option-item:active { transform: scale(0.98); }
+.option-item .opt-indicator {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 1px;
   transition: all .15s;
-  font-family: inherit;
-  color: var(--text);
 }
-.option-btn:active { transform: scale(0.98); }
-.option-btn.correct {
+.option-item.selected .opt-indicator {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.multi-mode .option-item .opt-indicator {
+  border-radius: 4px;
+}
+.option-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.option-item.correct {
   border-color: var(--correct);
-  background: #f0fdf4;
-  color: var(--correct);
+  background: var(--correct-bg);
 }
-.option-btn.wrong {
+.option-item.correct .opt-indicator {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: #fff;
+}
+.option-item.wrong {
   border-color: var(--wrong);
-  background: #fef2f2;
-  color: var(--wrong);
+  background: var(--wrong-bg);
 }
-.option-btn:disabled { pointer-events: none; }
+.option-item.wrong .opt-indicator {
+  background: var(--wrong);
+  border-color: var(--wrong);
+  color: #fff;
+}
+.option-item:disabled { pointer-events: none; opacity: 1; }
 
 .feedback {
   text-align: center;
   font-size: 15px;
   font-weight: 600;
-  margin: 12px 0;
+  margin: 10px 0 0;
   min-height: 24px;
 }
-.feedback.correct-fb { color: var(--correct); }
-.feedback.wrong-fb { color: var(--wrong); }
+.feedback.ok { color: var(--correct); }
+.feedback.bad { color: var(--wrong); }
 
 .quiz-nav {
   display: flex;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 16px;
+  gap: 10px;
+  padding: 0 16px 20px;
 }
 .quiz-nav button {
   flex: 1;
@@ -318,19 +267,16 @@ body {
   cursor: pointer;
   border: none;
   font-family: inherit;
+  transition: all .15s;
 }
+.quiz-nav button:active { transform: scale(0.97); }
+.btn-confirm { background: var(--accent); color: #fff; }
+.btn-confirm:disabled { background: #c7d2fe; }
 .btn-next { background: var(--accent); color: #fff; }
 .btn-next:disabled { background: #c7d2fe; }
-.btn-skip { background: #f3f4f6; color: #6b7280; }
+.btn-skip { background: #f3f4f6; color: #6b7280; flex: 0.5 !important; }
 
-.quiz-empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--sub);
-}
-.quiz-empty .emoji { font-size: 48px; margin-bottom: 16px; }
-
-/* ========== Result Screen ========== */
+/* ========== RESULT ========== */
 .result-wrap {
   max-width: 500px;
   margin: 0 auto;
@@ -345,354 +291,2379 @@ body {
 .result-wrap .score-label {
   font-size: 14px;
   color: var(--sub);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .result-stats {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 .stat-card {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 16px 24px;
+  padding: 14px 20px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
 }
-.stat-card .stat-val { font-size: 24px; font-weight: 700; }
-.stat-card .stat-lbl { font-size: 12px; color: var(--sub); }
-.stat-card.green .stat-val { color: var(--correct); }
-.stat-card.red .stat-val { color: var(--wrong); }
+.stat-card .stat-val { font-size: 22px; font-weight: 700; }
+.stat-card .stat-lbl { font-size: 11px; color: var(--sub); }
+.stat-card.ok .stat-val { color: var(--correct); }
+.stat-card.bad .stat-val { color: var(--wrong); }
 
 .review-list {
   text-align: left;
   max-width: 500px;
-  margin: 0 auto 24px;
+  margin: 0 auto 20px;
 }
 .review-item {
   background: var(--card);
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 12px 14px;
   margin-bottom: 8px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 13px;
 }
 .review-item .ri-q { font-weight: 600; margin-bottom: 4px; }
-.review-item .ri-a { color: var(--correct); font-size: 13px; }
-.review-item .ri-your { color: var(--wrong); font-size: 13px; }
+.review-item .ri-a { color: var(--correct); font-size: 12px; }
+.review-item .ri-your { color: var(--wrong); font-size: 12px; }
 
-/* ========== Star animation ========== */
+/* ========== QR MODAL ========== */
+.qr-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.qr-modal {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.qr-modal img {
+  max-width: 240px;
+  border-radius: 8px;
+}
+.qr-modal .qr-url {
+  font-size: 11px;
+  color: var(--sub);
+  word-break: break-all;
+  margin: 10px 0;
+  background: #f9fafb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-height: 36px;
+  overflow: hidden;
+}
+.qr-modal .qr-hint {
+  font-size: 12px;
+  color: var(--sub);
+}
+.qr-modal button {
+  margin-top: 12px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
 @keyframes popIn {
   0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.2); }
+  60% { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
 }
-.star-pop { animation: popIn .4s ease-out; }
+.star-pop { animation: popIn .35s ease-out; }
 
 @media (max-width: 400px) {
-  .options-grid { grid-template-columns: 1fr; }
   .question-card { padding: 16px 14px; }
-  .question-card .q-title { font-size: 16px; }
+  .question-card .q-title { font-size: 15px; }
+  .option-item { font-size: 14px; padding: 10px 12px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ==================== GENERATOR MODE ==================== -->
-<div id="generatorMode" style="display:none">
-<div class="generator-wrap">
-  <h1>📋 习题二维码生成器</h1>
-  <p class="subtitle">输入题目 → 生成二维码 → 扫码即可刷题</p>
+<!-- ==================== ACTIVATION LOCK ==================== -->
+<div id="lockScreen">
+<div style="max-width:420px;margin:0 auto;padding:60px 24px;text-align:center">
+  <div style="font-size:64px;margin-bottom:12px">🔐</div>
+  <h2 style="font-size:22px;font-weight:700;margin-bottom:4px">财务管理 · 刷题题库</h2>
+  <p style="font-size:13px;color:var(--sub);margin-bottom:28px">9 章 · 163 题 · 输入激活码解锁全部内容</p>
 
-  <div class="url-row">
-    <input type="text" id="baseUrl" placeholder="你的托管地址，如 https://xx.github.io/quiz-app.html" />
-    <button onclick="saveBaseUrl()">保存</button>
+  <div style="background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);border:1px solid var(--border)">
+    <input type="text" id="actCode" class="code-input"
+           placeholder="XXXX-XXXX-XXXX"
+           maxlength="14"
+           autocomplete="off"
+           style="width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:10px;font-size:20px;text-align:center;letter-spacing:3px;font-family:monospace;font-weight:700;outline:none;text-transform:uppercase" />
+    <p style="font-size:11px;color:var(--sub);margin:8px 0 16px">请输入购买课程后获得的 12 位激活码</p>
+
+    <button id="btnActivate" onclick="doActivate()"
+            style="width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer">
+      激活题库
+    </button>
+
+    <div id="actError" style="color:#dc2626;font-size:13px;margin-top:12px;display:none"></div>
   </div>
-  <div style="font-size:11px;color:var(--sub);margin:-8px 0 16px">
-    将此 HTML 文件托管到任意静态服务器（GitHub Pages / Vercel / Netlify），在此填入完整 URL
-  </div>
 
-  <div class="section-label">📝 题目列表 <span class="count" id="qCount">0 题</span></div>
-  <div id="questionsContainer"></div>
+  <p style="font-size:12px;color:var(--sub);margin-top:20px">如未购买激活码，请联系客服获取</p>
+</div>
+</div>
 
-  <div class="btn-row">
-    <button class="btn btn-outline" onclick="addQuestion()">+ 添加题目</button>
-    <button class="btn btn-outline" onclick="addSampleQuestions()">📥 填入示例</button>
-    <button class="btn btn-primary" onclick="generateQR()">🔳 生成二维码</button>
-    <button class="btn btn-ghost" onclick="clearAll()">清空</button>
-  </div>
-
-  <div class="qr-result" id="qrResult">
-    <h3 style="margin-bottom:12px">扫描二维码开始刷题</h3>
-    <img id="qrImage" alt="QR Code" />
-    <div class="qr-url" id="qrUrlText"></div>
-    <div class="qr-hint" id="qrHint"></div>
-    <div class="qr-warn" id="qrWarn"></div>
-    <div style="margin-top:16px">
-      <button class="btn btn-primary" onclick="previewQuiz()">👁 预览刷题界面</button>
+<!-- ==================== HOME ==================== -->
+<div id="homeMode" style="display:none">
+<div class="home-wrap">
+  <div class="home-header">
+    <h1>财务管理 · 刷题练习</h1>
+    <p class="subtitle" id="homeSub">共 9 章 · 163 题</p>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;align-items:center">
+      <button onclick="showMainQR()" style="background:#fff;border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">📱 生成全部题目二维码</button>
     </div>
   </div>
+  <div class="url-bar" style="margin-bottom:20px">
+    <input type="text" id="baseUrl" placeholder="托管地址（生成二维码用）" />
+    <span class="url-hint" style="cursor:pointer" onclick="autoDetectUrl()" title="自动检测">🔍 自动</span>
+  </div>
+  <div class="chapter-grid" id="chapterGrid"></div>
+  <div style="text-align:center;margin-top:28px;color:var(--sub);font-size:12px">
+    点击章节开始刷题 · 点击 📱 生成二维码
+  </div>
 </div>
 </div>
 
-<!-- ==================== QUIZ MODE ==================== -->
+<!-- ==================== QUIZ ==================== -->
 <div id="quizMode" style="display:none">
 <div class="quiz-wrap">
   <div class="quiz-topbar">
-    <span id="quizTitle">刷题练习</span>
-    <span class="progress-text" id="progressText">1/10</span>
+    <button class="back-btn" onclick="backToHome()" title="返回">←</button>
+    <span id="quizTitle" style="font-weight:600;color:var(--text)">刷题</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="btnShuffle" onclick="toggleShuffle()" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px" title="随机打乱">🔀</button>
+      <span id="progressText">1/10</span>
+    </div>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
   </div>
   <div class="quiz-body" id="quizBody"></div>
-  <div style="padding:0 16px 24px">
-    <div class="quiz-nav">
-      <button class="btn-skip" id="btnSkip" onclick="skipQuestion()" style="display:none">跳过</button>
-      <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>下一题 →</button>
-    </div>
+  <div class="quiz-nav">
+    <button class="btn-skip" id="btnSkip" onclick="skipQuestion()">跳过</button>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>下一题 →</button>
   </div>
 </div>
 </div>
 
-<!-- ==================== RESULT MODE ==================== -->
+<!-- ==================== RESULT ==================== -->
 <div id="resultMode" style="display:none">
 <div class="result-wrap" id="resultContent"></div>
 </div>
 
-<!-- ==================== EMPTY STATE ==================== -->
-<div id="emptyState" style="display:none">
-<div class="quiz-wrap">
-  <div class="quiz-body">
-    <div class="quiz-empty">
-      <div class="emoji">📭</div>
-      <p>没有题目数据</p>
-      <p style="font-size:13px;margin-top:4px">请通过正确的二维码或链接访问</p>
-    </div>
+<!-- ==================== QR MODAL ==================== -->
+<div id="qrOverlay" class="qr-overlay" style="display:none" onclick="if(event.target===this)closeQR()">
+<div class="qr-modal">
+  <h3 style="margin-bottom:12px" id="qrChapterTitle"></h3>
+  <img id="qrImage" alt="QR Code" crossorigin="anonymous" />
+  <div class="qr-url" id="qrUrlText"></div>
+  <div class="qr-hint" id="qrHint"></div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+    <button onclick="downloadQR()" style="background:var(--accent);color:#fff;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-size:14px">下载二维码</button>
+    <button onclick="closeQR()" style="background:#f3f4f6;padding:8px 18px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:14px">关闭</button>
   </div>
 </div>
 </div>
 
 <script>
-// ==================== DATA STORE ====================
-const STORAGE_KEY = 'quiz_questions';
-const URL_KEY = 'quiz_base_url';
+// Auto-generated question bank
+// Chapters: 9, Questions: 163
+const QUESTION_BANK = {
+  "作业一 财务管理总论": {
+    "name": "作业一 财务管理总论",
+    "questions": [
+      {
+        "q": "经济繁荣时期，不应该选择的财务战略是（    ）",
+        "o": [
+          "扩充厂房设备",
+          "增加存货",
+          "减少投资",
+          "提高产品价格"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "下列财务管理目标中，同时考虑资金时间价值和投资风险因素的是（       ）。",
+        "o": [
+          "利润最大化",
+          "产值最大化",
+          "每股收益最大化",
+          "企业价值最大化"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "企业与所有者之间的财务关系反映的是（       ）。",
+        "o": [
+          "经营权与所有权关系",
+          "投资与受资关系",
+          "债权债务关系",
+          "债务债权关系"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "在股份制企业，尤其是上市公司中，企业价值最大化目标往往演化为（        ）。",
+        "o": [
+          "每股收益最大化",
+          "利润最大化",
+          "股票账面价格最大化",
+          "股价最大化"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "下列经济活动中哪一项体现的是投资者和被投资者之间的财务关系。（      ）",
+        "o": [
+          "企业向国有资产投资公司支付利润",
+          "企业向其他企业支付货款",
+          "企业向国家税务机关缴纳税款",
+          "企业向职工支付工资"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "财务管理的核心工作环节为（       ）。",
+        "o": [
+          "财务预测",
+          "财务决策",
+          "财务预算",
+          "财务控制"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "某上市公司职业经理人在任职期间不断提高在职消费，损害股东利益。这一现象所揭示的公司制企业的缺点主要是（       ）。",
+        "o": [
+          "产权问题",
+          "激励问题",
+          "代理问题",
+          "责权分配问题"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "经营者对股东目标的背离表现在道德风险和逆向选择两个方面，下列属于道德风险的是（      ）。",
+        "o": [
+          "不愿为提高股价而冒险",
+          "装修豪华的办公室",
+          "借口工作需要乱花股东的钱",
+          "蓄意压低股票价格，以个人名义借款买回"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "下列各项中，用于协调企业所有者与债权人矛盾的方法是（       ）。",
+        "o": [
+          "解聘",
+          "监督",
+          "激励",
+          "停止借款"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "甲乙两个企业均投入1 000万元的资本，本年获利均为60万元，但甲企业的获利已经全部转化为现金，而乙企业则全部是应收账款。如果在分析时得出两个企业收益水平相同的结论，得出此结论的原因是（        ）。",
+        "o": [
+          "没有考虑利润的获取时间",
+          "没有考虑所获利润与投入资本的关系",
+          "没有考虑利润所承担风险的大小",
+          "没有考虑剩余产品的创造能力"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "企业同其债权人之间的财务关系反映的是（      ）。",
+        "o": [
+          "经营权与所有权关系",
+          "债权债务关系",
+          "投资与受资关系",
+          "债务债权关系"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "企业的财务活动包括（        ）。",
+        "o": [
+          "企业筹资引起的财务活动",
+          "企业投资引起的财务活动",
+          "企业经营引起的财务活动",
+          "企业分配引起的财务活动"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在经济繁荣阶段，市场需求旺盛，企业应（        ）。",
+        "o": [
+          "扩大生产规模",
+          "增加投资",
+          "减少投资",
+          "增加存货"
+        ],
+        "a": [
+          0,
+          1,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "利润最大化目标的缺点有（         ）。",
+        "o": [
+          "没有考虑资金的时间价值",
+          "没有考虑投资风险价值",
+          "没有反映利润与投入资本的关系",
+          "可能导致企业短期行为"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列表述正确的是（       ）。",
+        "o": [
+          "利润最大化目标是一种相对侧重于经营者业绩考评的财务管理目标",
+          "资本利润率最大化目标是一种相对侧重于所有者的财务目标",
+          "当债券市场价值和投资资本不变时，企业价值的增加等于股东财富的增加。",
+          "企业价值是企业全部资产的市场价值"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列关于财务管理目标的表述，正确的有（　　　 ）。",
+        "o": [
+          "如果假设投入资本相同、利润取得的时间相同，利润最大化是一个可以接受的观念",
+          "假设股东投资资本不变，股价最大化与增加股东财富具有同等意义。",
+          "假设股东投资资本和债务价值不变，企业价值最大化与增加股东财富具有相同的意义",
+          "股东财富可以用股东权益的市场价值来衡量"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在金融市场上，利率的构成因素有（　　　）。",
+        "o": [
+          "纯利率",
+          "通货膨胀补偿率",
+          "流动性风险报酬率",
+          "违约风险报酬率",
+          "期限性风险报酬率"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "财务管理环境主要包括（       ）。",
+        "o": [
+          "经济环境",
+          "法律环境",
+          "金融环境",
+          "社会文化环境"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在利息率的构成中，风险报酬率包括（      ）。",
+        "o": [
+          "违约风险报酬率",
+          "流动性风险报酬率",
+          "期限风险报酬率",
+          "通货膨胀率"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "以相关者利益最大化作为财务管理目标体现了合作共赢的价值。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "国家采取紧缩的财政与货币政策时，会使企业筹资变得困难；反之，会使企业筹资变得容易。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "风险报酬是指冒风险投资取得的额外报酬，可用风险报酬率或风险报酬额计量。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "企业与受资者之间的财务关系是体现债权性质的投资与受资关系。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "影响财务管理的经济环境因素主要包括经济周期、经济发展水平、经济政策和金融市场状况。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "一项负债期限越长，债权人承受的不确定因素越多，承担的风险也越大。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "股东财富由股东所拥有的股票数量和股票的市场价格两方面来决定。如果股票数量一定，则当股票价格达到最高时，股东财富也达到最大。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "利率就是资金使用权的价格，是影响企业融资成本和投资效益的重要因素。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "企业的信用程度可分为若干等级，等级越高，信用越好，违约风险越小，利率水平越高。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "在企业经营引起的财务活动中，主要涉及的是固定资产和长期负债的管理问题，其中关键是资本结构的确定。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      }
+    ],
+    "count": 29
+  },
+  "作业七  营运资本管理": {
+    "name": "作业七  营运资本管理",
+    "questions": [
+      {
+        "q": "持有过量现金可能导致的不利后果是(      )",
+        "o": [
+          "财务风险加大",
+          "收益水平下降",
+          "偿债能力下降",
+          "资产流动性下降"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "紧缩的营运资本持有政策要求企业在一定的销售水平上保持（      ）的流动资产，这种政策的特点是（      ）。",
+        "o": [
+          "较多；报酬高，风险大",
+          "较少；报酬高，风险大",
+          "较多；报酬低，风险小",
+          "较少；报酬低，风险小"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "下列各项中属于应收帐款机会成本的是（     ）。",
+        "o": [
+          "坏账损失",
+          "收账费用",
+          "对客户进行调查的费用",
+          "应收账款占用资金的应计利息"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "企业如果采用积极的收账政策，可能会（     ）应收账款投资，（       ）坏账损失，（       ）收账成本。",
+        "o": [
+          "增加，增加，减少",
+          "减少，减少，增加",
+          "增加，减少，减少",
+          "减少，增加，增加"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "在一定时期，当现金需要量一定时，同现金持有量成反比的成本是（      ）。",
+        "o": [
+          "机会成本",
+          "短缺成本",
+          "转换成本",
+          "管理成本"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "如果某企业的信用条件是\"2/10，n/30\"，则放弃现金折扣的资金成本为（      ）。",
+        "o": [
+          "36%",
+          "18%",
+          "35.29%",
+          "36.73%"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "当公司采用宽松的短期资产持有政策时，采用（       ）短期筹资政策，可以在一定程度上平衡公司持有过多短期资产带来的低风险、低收益。",
+        "o": [
+          "配合型",
+          "激进型",
+          "稳健型",
+          "任意一种"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "经济批量是指（     ）。",
+        "o": [
+          "采购成本最低的采购批量",
+          "订货成本最低的采购批量",
+          "储存成本最低的采购批量",
+          "存货总成本最低的采购批量"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "根据经济订货批量的基本模型，下列各项中可能导致经济订货批量提高的是（      ）。",
+        "o": [
+          "一定时期存货总需求降低",
+          "每次订货成本降低",
+          "每期单位存货储存成本降低",
+          "存货的采购单价降低"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "研究保险储备的目的，就是要找出合理的保险储备量，使（    ）最小。",
+        "o": [
+          "存货总成本",
+          "缺货成本和保险储备成本之和",
+          "缺货成本",
+          "经济批量相关总成本"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "有效的现金管理方法主要有（      ）。",
+        "o": [
+          "现金流同步化",
+          "合理估计\"浮存\"",
+          "加速应收帐款收现",
+          "采用最严格的信用政策"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "企业持有现金的动机主要有（      ）。",
+        "o": [
+          "交易动机",
+          "预防动机",
+          "投机动机",
+          "盈利动机"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列对信用期对描述中正确的是（       ）。",
+        "o": [
+          "缩短信用期，有利于扩大销售收入",
+          "信用期越短，企业坏账风险越小",
+          "信用期越长，表明客户享受的信用条件越优越",
+          "信用期越短，应收账款的机会成本越高"
+        ],
+        "a": [
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "延长信用期间可能会使 (      )。",
+        "o": [
+          "销售收入增加",
+          "应收账款增加",
+          "收账费用增加",
+          "坏账损失增加"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "确定再订货点，必须考虑的因素是（         ）。",
+        "o": [
+          "平均每天的正常耗用量",
+          "预计每天的最大耗用量",
+          "提前时间",
+          "预计最长收货时间",
+          "保险储备"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "无论企业是否放弃现金折扣，商业信用的资金成本都比较低。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "赊销是扩大收入的有力手段之一，企业应尽可能的放宽信用条件，增加赊销量。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "宽松的营运资本持有政策要求企业在一定的销售水平上保持较多的流动资产，该政策的特点是低风险低收益。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "营运资本具有流动性强的特点，但是流动性越强的资产其收益性就越差。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      }
+    ],
+    "count": 19
+  },
+  "作业三 证券估值": {
+    "name": "作业三 证券估值",
+    "questions": [
+      {
+        "q": "债券投资者购买债券时，可以接受的最高价格是（      ）。",
+        "o": [
+          "当前市场价格",
+          "到期价值",
+          "投资内在价值",
+          "票面价值"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "某公司发行的股票，投资人要求的必要报酬率为20%，最近刚支付的股利为每股2元，估计股利年增长率为10%，则该种股票的价值为（     ）元。",
+        "o": [
+          "20",
+          "24",
+          "22",
+          "18"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "无风险利率为6%，市场上所有股票的平均报酬率为 10%，某种股票的贝塔系数为1.5，则该股票的报酬率为（     ）。",
+        "o": [
+          "7.5%",
+          "12%",
+          "14%",
+          "16%"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "甲公司发行的优先股每季度支付股利1.2元每股，年必要报酬率为12%，则该公司优先股的价值为（        ）元。",
+        "o": [
+          "20",
+          "40",
+          "10",
+          "60"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "下列关于债券到期收益率的说法中，正确的是（           ）。",
+        "o": [
+          "债券到期收益率是使债券未来现金流量的现值等于债券买入价格的折现率",
+          "债券到期收益率是使债券每年利息收入的现值等于债券买入价格的折现率",
+          "债券到期收益率是债券利息收益率与资本利得收益率之和",
+          "债券到期收益率的计算要以债券每年末计算并支付利息、到期一次还本为前提"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "股票投资的缺点有（        ）。",
+        "o": [
+          "资金安全性高",
+          "求偿权居后",
+          "价格不稳定",
+          "收入不稳定"
+        ],
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列有关债券投资特点的表述中，正确的有（     　）。",
+        "o": [
+          "与股票投资相比，债券投资风险较小，本金安全性高",
+          "正常情况下，债券投资都能获得比较稳定的收入",
+          "债券投资者只能获得投资收益，没有公司的经营管理权",
+          "债券投资需承受利率变化的风险"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列关于β系数的正确的是（　　　）",
+        "o": [
+          "在其他因素不变的情况下β系数越大，风险系数越大",
+          "作为整体的证券市场的β系数为1",
+          "用来反映不可分散风险的程度",
+          "某股票β系数小于1，说明其风险大于整个市场的风险"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "债券的到期收益率是（       ）。",
+        "o": [
+          "能够评价债券收益水平的指标之一",
+          "指以特定价格购进债券后，一直持有该债券至到期日可获取的年收益率",
+          "等于债券的实际收益率",
+          "能使未来现金流量现值等于债券买入价格的贴现率"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "证券投资的目的有（       ）。",
+        "o": [
+          "暂时存放闲置资金",
+          "获得对相关企业的控制权",
+          "获得投资收益",
+          "分散风险"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "债券到期时间越长，其风险越大，债券的票面利率也越低。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "普通股股东与公司债权人相比，要承担更大的风险，所以其报酬也有更大的不确定性。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "在其他条件不变时，证券的风险越大，投资者要求的必要报酬率越高",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "优先股是一种介于债券和普通股之间的混合证券，债券的估值方法也可用于优先股估值。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "当投资者要求的必要报酬率高于票面利率时，债券价值高于面值。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "平价购买的每年付息一次的债券的到期收益率等于票面利率。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      }
+    ],
+    "count": 16
+  },
+  "作业二 （1）货币时间价值": {
+    "name": "作业二 （1）货币时间价值",
+    "questions": [
+      {
+        "q": "货币时间价值的实质是(     )。",
+        "o": [
+          "暂缓消费的补偿",
+          "资全周转使用后的增值额",
+          "资金所有者与资金使用者分离的结果",
+          "时间推移带来的差额价值"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "下列项目中，与普通年金终值系数互为倒数的是（      ）。",
+        "o": [
+          "预付年金终值系数",
+          "普通年金现值系数",
+          "偿债基金系数",
+          "资本回收系数"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "采取年金形式的有(     )。",
+        "o": [
+          "折旧",
+          "租金",
+          "养老金",
+          "保险金"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在复利计息方式下,影响普通年金终值大小的因素包括(      )。",
+        "o": [
+          "单利",
+          "期限",
+          "普通年金",
+          "利率"
+        ],
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "关于递延年金,下列说法中正确的有 (       )",
+        "o": [
+          "递延年金是指隔若干期以后才开始发生的系列等收付款项",
+          "递延年金终值的大小与递延期无关",
+          "递延年金现值的大小与递延期有关",
+          "递延期越长,递延年金的现值越大"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列说法中, 正确的有(      )。",
+        "o": [
+          "普通年金终值系数和偿债基金系数互为倒数",
+          "普通年金终值系数和普通年金现值系数互为倒数",
+          "复利终值系数和复利现值系数互为倒数",
+          "普通年金现值系数和资本回收系数互为倒数"
+        ],
+        "a": [
+          0,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "某公司拟购置一处房产，付款条件是：从第7年开始，每年年初支付10万元，连续支付10次，共100万元。假设该公司的资金成本率为10%，则相当于该公司现在一次付款的金额为(       )。",
+        "o": [
+          "10［(P/A，10%，15)］- (P/A，10%，5)］",
+          "10 (P/A，10%，10) (P/F，10%，5)",
+          "10［(P/A，10%，16)-( P/A，10%，6)］",
+          "10［(P/A，10%，15)- (P/A，10%，6)］"
+        ],
+        "a": [
+          0,
+          1
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在通货膨胀率很低的情况下公司债券的利率可视同为资金时间价值。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "企业需用一设备，买价为3600元，可用10年，如租用，则每年年初需付租金500元，除此以外，买与租的其他情况相同。假设利率为10%，则租赁该设备较优。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "即付年金现值系数就是在普通年金终值系数的基础上乘(1+i)所得的结果。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "当一年内复利次数超过一次时，实际利率大于名义利率。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "在现值和计息期数一定的情况下，利率越高，则复利终值越大。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "货币时间价值的原理，正确揭示了不同时点上资金的换算关系，是财务决策的基本依据。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "经济危机、通货膨胀以及高利率通常被认为是可分散的市场风险。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "普通股股东与公司债权人相比，要承担更大的风险，其报酬也有更大的不确定性，",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      }
+    ],
+    "count": 15
+  },
+  "作业二 （2）风险与报酬": {
+    "name": "作业二 （2）风险与报酬",
+    "questions": [
+      {
+        "q": "投资者冒着风险进行投资,是因为(     )。",
+        "o": [
+          "进行风险投资可使企业获得收益",
+          "进行风险投资可使企业获得等同于时间价值的收益",
+          "进行风险投资可使企业获得超过时间价值以上的收益",
+          "进行风险投资可使企业获得小于时间价值的收益"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "下列投资中,风险最大的是(    )。",
+        "o": [
+          "储蓄存款",
+          "购买政府债券",
+          "购买企业债券",
+          "购买股票"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "已知某证券的β系数等于2，则该证券（      ）。",
+        "o": [
+          "无风险",
+          "有非常低的风险",
+          "与金融市场所有证券的平均风险一致",
+          "是金融市场所有证券平均风险的2倍"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "为比较期望收益率不同的两个或两个以上方案的风险程度, 应采用的标准是(     )",
+        "o": [
+          "标准离差",
+          "变异系数",
+          "概率",
+          "风险收益率"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "下列关于β系数的说法正确的是（　　　 ）。",
+        "o": [
+          "用来反映可分散风险的程度",
+          "作为整体的证券市场的β系数为0",
+          "在其他因素不变的情况下β系数越大，风险系数越大",
+          "某股票β系数小于1，说明其风险大于整个市场的风险"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "当两种证券完全正相关时，由此形成的证券组合(      )。",
+        "o": [
+          "可分散部分风险",
+          "可分散全部风险",
+          "不可分散风险",
+          "证券组合风险小于单项证券风险的加权平均值"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "下列因素引起的风险中，投资者可以通过证券投资组合予以消减的是(      )。",
+        "o": [
+          "国家财政政策的变化",
+          "某公司经营失败",
+          "通货膨胀",
+          "某公司工人罢工"
+        ],
+        "a": [
+          1,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列各种情况中，会给公司带来非系统风险的有（      ）。",
+        "o": [
+          "产品研发失败",
+          "公司经营决策失误",
+          "通货膨胀",
+          "利率变动"
+        ],
+        "a": [
+          0,
+          1
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "关于投资者要求的期望投资收益率, 下列说法中正确的有(      )。",
+        "o": [
+          "风险程度越高,要求的收益率就越低",
+          "风险程度越高,要求的收益率就越高",
+          "无风险收益率越高,要求的期望投资收益率就越高",
+          "实质是一种机会成本"
+        ],
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在不考虑通货膨胀的情况下,投资收益率包括(     )。",
+        "o": [
+          "通货膨胀补偿率",
+          "无风险收益率",
+          "资本成本率",
+          "风险收益率"
+        ],
+        "a": [
+          1,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列有关证券投资风险的表述中，正确的有（     　）。",
+        "o": [
+          "当两种证券完全正相关时，由此形成的证券投资可以完全分散掉非系统性风险",
+          "公司特有风险是不可分散风险",
+          "股票的市场风险不能通过证券投资组合加以消除",
+          "当投资组合中股票的种类特别多时，非系统风险几乎可全部分散掉"
+        ],
+        "a": [
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "风险和报酬的基本关系是风险越大则其报酬率就越高。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "经济危机、通货膨胀、经济衰退通常被认为是可分散的市场风险。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "将两只完全负相关的股票组合在一起，则能分散掉全部非系统风险。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "政府发行的债券因为有国家财力作后盾，其本金安全性较高，通常视为无风险债券。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "证券组合投资要求补偿的风险只是市场风险，而不要求对可分散风险进行补偿。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      }
+    ],
+    "count": 16
+  },
+  "作业五 （1） 资本成本、杠杆系数 ": {
+    "name": "作业五 （1） 资本成本、杠杆系数 ",
+    "questions": [
+      {
+        "q": "发行普通股筹资，既能为企业带来杠杆利益，又具有抵税效应，所以企业在筹资时应优先考虑普通股。（    ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "留用利润是企业利润所形成的，所以使用留用利润不须付出任何代价。（     ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "企业利用财务杠杆可能会产生好的效果也可能产生坏的效果。（    ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "财务杠杆系数越大，则财务风险越小。（    ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "公司最佳资本结构是指，综合平均资本成本最低且公司价值最大的资本结构。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "当营业杠杆系数和财务杠杆系数都为1.5时，联合杠杆系数等于3。 （     ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "联合杠杆的作用是能用来估计销售量的变动对普通股每股收益所造成的影响。（     ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "优先股资本成本一般大于长期债券资本成本。 （      ）",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "如果企业负债资金为零，则财务杠杆系数为1。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "如果预计企业的资本报酬率高于借款利率，则企业应降低负债比例。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      }
+    ],
+    "count": 10
+  },
+  "作业八 股利分配": {
+    "name": "作业八 股利分配",
+    "questions": [
+      {
+        "q": "容易造成股利支付额与本期净利润相脱节的股利分配政策是（     ）。",
+        "o": [
+          "剩余股利政策",
+          "固定股利政策",
+          "固定股利支付率政策",
+          "低正常股利加额外股利政策"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "下列股利政策中，属于一种投资优先的股利政策的是（       ）。",
+        "o": [
+          "剩余股利政策",
+          "固定股利政策",
+          "固定股利支付率政策",
+          "低正常股利加额外股利政策"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "下列股利政策中，能够使股利支付水平与公司盈利状况密切相关的是（       ）。",
+        "o": [
+          "固定股利政策",
+          "剩余股利政策",
+          "固定股利支付率政策",
+          "稳定增长股利政策"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "发放股票股利将导致（     ）。",
+        "o": [
+          "企业资产总额增加",
+          "企业净资产总额增加",
+          "资产负债表中股东权益结构变化",
+          "企业筹资规模扩大"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "某公司原发行普通股1000万股，拟发放20%股票股利。若原每股收益是1.2元每股，则发放股票股利后的每股收益是（     ）元每股。",
+        "o": [
+          "1.2",
+          "1",
+          "2.4",
+          "3.6"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "能保证企业的资本结构达到目标资本结构的股利政策是（      ）。",
+        "o": [
+          "剩余股利政策",
+          "固定股利政策",
+          "固定股利支付率政策",
+          "低正常加额外股利政策"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "下列关于股票分割的论述中，正确的是（       ）。",
+        "o": [
+          "股票分割可以增加股东财富",
+          "股票分割不会使股票价格下降",
+          "股票分割可使股票股数增加，但股票面值不变",
+          "股票分割不会影响资产负债表中股东权益各项金额的变化"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "下列股利理论中，认为股利政策包含了公司经营状况和未来发展前景的信息的理论是（      ）。",
+        "o": [
+          "一鸟在手理论",
+          "代理理论",
+          "税收差别理论",
+          "信号传递理论"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "股票股利与股票分割的不同点有（     ）。",
+        "o": [
+          "不改变股东权益资金的总量",
+          "每股收益会下降",
+          "改变股东权益资金的结构",
+          "每股市价会下降"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "某公司提取了公积金和公益金后的本年净利润为150万元，计划下年投资一个新项目，需要投资200万元，公司目标资本结构要求负债权益比为2：3，公司流通在外的普通股为100万股，如果公司采用剩余股利政策，则公司本年可发放的股利额是（       ）。",
+        "o": [
+          "150万元",
+          "120万元",
+          "30万元",
+          "10万元"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "下列关于股票股利的说法，正确的有（      ）。",
+        "o": [
+          "发放股票股利可以增加股东财富",
+          "发放股票股利不会改变公司股东权益总额",
+          "发放股票股利会增加公司的股本总额",
+          "发放股票股利不会增加公司的现金流出量",
+          "发放股票股利后股票价格不会下降"
+        ],
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "我国股份有限公司可以采用的股利支付方式有（　　　）。",
+        "o": [
+          "现金股利",
+          "股票股利",
+          "财产股利",
+          "负债股利"
+        ],
+        "a": [
+          0,
+          1
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "下列股利理论中，属于股利相关理论的是（       ）。",
+        "o": [
+          "一鸟在手理论",
+          "税收差别理论",
+          "信号传递理论",
+          "代理理论"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "公司常用的股利政策类型包括（       ）。",
+        "o": [
+          "剩余股利政策",
+          "固定或稳定增长股利政策",
+          "固定股利支付率政策",
+          "低正常股利加额外股利政策"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "公司进行股票回购的动机主要有（        ）。",
+        "o": [
+          "传递股价被低谷的信号",
+          "为股东避税",
+          "减少公司自由现金流量",
+          "预防或抵制敌意收购"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "股利分配与内部筹资的关系是一种此消彼涨的关系。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "公司分派股票股利会增加现金流出量。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "\"一鸟在手\"理论认为，相对于资本利得，投资者更偏好现金股利。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "发放股票股利后普通股股份的数量会增加，每股收益和每股市价会下降，则每位股东所持股票市场价值总额也会下降。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "固定股利政策可以向投资者传递公司经营状况稳定的信息。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "投资者只有在除权日之前购买股票，才能领取最近一次的股利。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "采用剩余股利政策，首先要确定企业的最佳资本结构。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "发放股票股利不会增加股东财富，但股票分割可以增加股东财富。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "根据信号理论，公司回购股票主要是向市场传递股价被低估的信号。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "固定股利支付率政策可能会使各年股利波动较大。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      }
+    ],
+    "count": 25
+  },
+  "作业六 (1) 项目投资管理": {
+    "name": "作业六 (1) 项目投资管理",
+    "questions": [
+      {
+        "q": "当某方案的净现值大于零时，其内部收益率(      )",
+        "o": [
+          "可能小于零",
+          "一定等于零",
+          "一定大于设定的贴现率",
+          "可能等于设定的贴现率"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "下列投资决策评价指标中，考虑了资金时间价值的指标有（   ）。",
+        "o": [
+          "净现值",
+          "动态投资回收期",
+          "获利指数",
+          "内含报酬率"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "对独立投资方案来说，下列说法中正确的是(      )。",
+        "o": [
+          "资本成本越高，净现值越低",
+          "资本成本越高，净现值越高",
+          "资本成本等于内含报酬率时，净现值为零",
+          "资本成本高于内含报酬率时，净现值小于零",
+          "资本成本高于内含报酬率时，净现值大于零"
+        ],
+        "a": [
+          0,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "长期投资决策中的初始现金流量包括（      ）。",
+        "o": [
+          "固定资产投资",
+          "垫支的营运资金",
+          "原有固定资产的变价收入",
+          "其他投资费用"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "在比较任何两个投资方案时，内部收益率较高的方案就是可行的较优方案。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "净现值法考虑了资金的时间价值，但是不能揭示各方案本身可能达到的投资报酬率。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "某方案的净现值为零，则该方案贴现率可称为该方案的内含报酬率。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "由于获利指数是用相对数表示，所以投资决策时采用获利指数法优于净现值法。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      }
+    ],
+    "count": 8
+  },
+  "作业四  长期筹资方式 ": {
+    "name": "作业四  长期筹资方式 ",
+    "questions": [
+      {
+        "q": "以下项目中不属于敏感项目的是",
+        "o": [
+          "现金",
+          "应付账款",
+          "股本",
+          "存货"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "企业外部筹资方式很多，但不包括（     ）方式。",
+        "o": [
+          "长期借款筹资",
+          "发行股票筹资",
+          "企业留用利润",
+          "投入资本筹资"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "筹集股权资本是企业筹集（        ）的一种重要方式。",
+        "o": [
+          "长期资本",
+          "短期资本",
+          "债权资本",
+          "以上都不是"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "某企业预向银行实际借款100万元，年利率10%，银行要求企业按借款余额20%保持补偿性余额，则企业必须向银行借入（    ）的款项。",
+        "o": [
+          "100万元",
+          "80万元",
+          "125万元",
+          "90万元"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "出租人既出租某项资产，又以该项资产为担保借入资金的租赁方式是（     ）。",
+        "o": [
+          "杠杆租赁",
+          "直接租赁",
+          "经营租赁",
+          "售后租回"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "某企业年初以先付租金方式融资租入设备一台，设备价款为1000万元，租期为9年，到期后该设备归企业所有，折现率确定为8%，则企业每年年初应支付租金（    ）。",
+        "o": [
+          "148.21万元",
+          "111.11万元",
+          "100万元",
+          "88.89万元"
+        ],
+        "a": 0,
+        "type": "single"
+      },
+      {
+        "q": "某企业实际需要用款700万元，年利率10%，银行要求企业按借款额保持20%补偿性余额，则企业必须向银行借入（       ）。",
+        "o": [
+          "700万元",
+          "750万元",
+          "875万元",
+          "1000万元"
+        ],
+        "a": 2,
+        "type": "single"
+      },
+      {
+        "q": "某公司发行可转换债券，每张面值为1000元，若该可转换债券的转换价格为40元，则每张债券能够转换为股票的股数为（   　）。",
+        "o": [
+          "40",
+          "15",
+          "30",
+          "25"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "下列筹资方式中，兼具筹资速度快，筹资费用和资本成本低、筹资弹性较大等特点的是（      ）。",
+        "o": [
+          "发行股票",
+          "融资租赁",
+          "发行债券",
+          "长期借款"
+        ],
+        "a": 3,
+        "type": "single"
+      },
+      {
+        "q": "以下属于长期债务筹资方式的是（         ）。",
+        "o": [
+          "商业信用",
+          "公司债券",
+          "发行股票",
+          "短期借款"
+        ],
+        "a": 1,
+        "type": "single"
+      },
+      {
+        "q": "营业收入比例法下资产负债表中的敏感项目包括（       ）。",
+        "o": [
+          "长期借款",
+          "应收账款",
+          "应付账款",
+          "存货"
+        ],
+        "a": [
+          1,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "以下长期筹资方式中，属于债务性筹资的有(       )。",
+        "o": [
+          "融资租赁",
+          "留用利润",
+          "长期借款",
+          "普通股"
+        ],
+        "a": [
+          0,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "与股票相比，债券的特点包括（         ）。",
+        "o": [
+          "债券代表一种债权关系",
+          "债券的求偿权优先于股票",
+          "债券持有人无权参与企业决策",
+          "债券投资的风险小于股票投资",
+          "可转换债券按规定可转换为股票"
+        ],
+        "a": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "股票上市可能对公司产生的不利影响包括（      ）。",
+        "o": [
+          "可能会分散公司控制权",
+          "使公司失去隐私权",
+          "限制经理人员操作的自由度",
+          "公开上市需要很高的费用"
+        ],
+        "a": [
+          0,
+          1,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "以下有关优先股的论述正确的是（      ）。",
+        "o": [
+          "优先股是一种具有双重性质的证券",
+          "优先股是企业自有资金的一部分，其股东所拥有的权利与普通股股东相同",
+          "优先股的股利不能像债务利息那样从税前扣除，而必须从净利润中支付",
+          "优先股没有固定的到期日，不用偿还本金，但往往需要支付固定的股利，成为财务上的一项负担"
+        ],
+        "a": [
+          0,
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "股票按股东权利和义务的不同可分为（      ）。",
+        "o": [
+          "始发股",
+          "法人股",
+          "普通股",
+          "优先股"
+        ],
+        "a": [
+          2,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "一般来说，普通股筹资成本要大于债务资金，其主要原因是（      ）。",
+        "o": [
+          "股利要从净利润中支付",
+          "普通股的发行费较高",
+          "股利一般高于利息",
+          "筹资风险低"
+        ],
+        "a": [
+          0,
+          1,
+          2
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "以下长期筹资方式中，属于混合性筹资方式的有（        ）。",
+        "o": [
+          "长期借款筹资",
+          "发行优先股",
+          "发行普通股",
+          "可转债筹资",
+          "融资租赁"
+        ],
+        "a": [
+          1,
+          3
+        ],
+        "type": "multi"
+      },
+      {
+        "q": "一般来说，债券的市场利率越高，债券的发行价格就越低；反之，发行价格就可能越高。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "普通股筹资既可以增强公司的信誉，又无须偿还本金。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "优先股和可转换债券既具有债务筹资性质，又具有股权筹资性质。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "优先股股利像债务利息一样成为公司一项固定财务负担，固定股利的支付构成公司法定义务。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "补偿性余额的约束减少了借款企业的应付利息。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      },
+      {
+        "q": "在营业收入比例法下，预计利润表与实际利润表、预计资产负债表与实际资产负债表的内容和格式都是相同的。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 0,
+        "type": "judge"
+      },
+      {
+        "q": "当债券的票面利率大于市场利率时，其发行价格小于面值，为折价发行。",
+        "o": [
+          "正确",
+          "错误"
+        ],
+        "a": 1,
+        "type": "judge"
+      }
+    ],
+    "count": 25
+  }
+};
 
-function loadQuestions() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
+</script>
+<script>
+// ==================== GLOBALS ====================
+const URL_KEY = 'quiz_host_url';
+const ACT_KEY = 'quiz_activated';
+let currentChapter = null;
+let quizQuestions = [];
+let currentIndex = 0;
+let userAnswers = [];   // single/judge: chosen index or -1; multi: array of indices or []
+let isRevealed = false;
+
+// ==================== ACTIVATION ====================
+const VALID_HASHES = [
+  "2f28aead8e8abbc87fd20df4800db53db169cd2becf682454f1ee052d785b4d8",
+  "f7b9be16fa38b294123b610cc8736e0c2aad6362116e6c2fe730eaf79f860feb",
+  "c65a86f635b81ab4c6c3f596ccea03954fdbca5430d7ff18e520c51334733ac8",
+  "260c7da8e6c37dbe38ac5687543b02e1d8cf1e1c42620a8d74270b9c704999c8",
+  "376ff2e561d63cd14e88df2f899bc1471758f6105dc3eee62897819b7ac44565",
+  "de0dd9428532ed8431883900b7247e70d083828d5d78ccb0f0235b42f12e36d5",
+  "87c2e97e0f003282bbf0843c74df26f3d0ce9e694d8e4fcfda2ed3d94312f30d",
+  "baf16d5bd55a5ab0ba4fa9ce6459434b3dd7d754a878033539f6e69b47364b1b",
+  "29047f64f6a846a8e65ce376cd7d64f2654ca3b27821f791696370917719e921",
+  "99e8f5c1e8e4a51a4139ce16112e7f0671a806e349ac30c59f94211b6a601f46",
+  "0c1d63909834ef50ec03d71c60d8b498e4ff22bed35358bd10c72c3a6175a860",
+  "1036b284f54b186203e1037786f872d95750dfc719c55dec5d5e401c4902d609",
+  "e2bca8fe4c1c66e77146a87f1addfdb530df6ca9c3cdb047cb8d359eb2a33ce5",
+  "2dbb9285ff263147291a49906c538159d328807e3cd414161744d35f9274efda",
+  "38473bb33eed1c5563acd5f093dcdb7ba1ccade602f3d8a4be7f08b728b26d18",
+  "f0daf684103cb39b42b7487f6ac4457b5f71128750a61e96e0a0f4cea91919b2",
+  "ed603e7c1db0b8307e471df3752f10f5ea02c4fff95f82f8c5e8501de0097226",
+  "de1544d2119f5cd4309d9079b024f96032ffd7a927271ff0e7fce5736742e953",
+  "fb032e53d45ba198cddb3123b00eab6ad596b9025c8f3aa23b7de7920e71721c",
+  "49674a662e2b0a743b42f448e3d48336ddbac1ba7bdc9a698a2a77a63ca70584",
+  "f5f6aefd97d98a0b527a9f82cbbbddf0aa72dcee47c7897846e7bb26a96ab5ad",
+  "7d76c931f66c108e67ebca23f480935a41e51b284dbeedee9e79954df11397e9",
+  "0fb80c53a68de7c830c91be6c14565de46dbe4dcedfd2c73202603dc58fbd3a4",
+  "fc60a3a843dccc0be7286f07a112a0d2f181e626e598888a50d42ba4051c225e",
+  "4a7adf6ef8ed6fa509c92c03a254c8e6c05b8c4a5f8fb1a06c5406ccbe6ca602",
+  "4d2a32374f773f1cbb8a578b2bac46026048cedaf81461096d6613986cfb982a",
+  "941abaf236a9ff755bcc79bb9daf75223fc15c1a36795ed959878ee341fd5ab7",
+  "0222ea8b2a11abb07fc1befa7030598e5ee9af5ec63f89e05bc2ddbe819f88d1",
+  "a29c71b3ed5726b89c7f6fcd2866524a78398f48a4fb6fad941457dfcb703b97",
+  "4fb24773d336bc3b7c1d221c7584b73cb0c47fe3c3d7f055c3a789c21a5b70dd",
+  "096fff22dd648dde1e28f07dfb194bcffbc001d3a36f31106bca637f69fae196",
+  "9b1dcf1b3dcf1f901c131a0404c29643da7819c4825cf958dcdfa26a7f5db094",
+  "c78b2aaa73faf5beede3247329721d89986341b27fb8f13f89416817059af1c6",
+  "1a0480002479b7a8235ed932f49bea84a0fda389adcd61968a1538536d2c38d3",
+  "54fe9bb38b5a230826c9e602c8688e21b08a34754a0ddc756bc6efb475eb96e4",
+  "cefba5b48ef8d628d79aef14c63247dc62da8794777bcef3e3e58a894097ed6c",
+  "b019b247a80aca08daa40913d5c10c28af3c9af413f4924b6c95d5b9374ddf01",
+  "eb39409e58c04b840a6968d14b7c10df7d5a20fd5768d1ae8fce8009f144519b",
+  "adac2988e90261cdd25c781e19f733621a54cad9a60d056c7330019ac082a999",
+  "a885b9cc47189fb56c056e33a69215861f4b3ab24814c83720dbb2a4862f8982",
+  "615d425ac5b6c34236309e9065419b9c5f57085bd5e70a7ea0e231925bf0091e",
+  "95d4d8bfca7b2b6e42563f30cf44e8244f180d97bc2dcf7cad952f83b7e1c5c8",
+  "15fa0d8c5a0bfc10f96f64d57f147d9322c5a665d2d5d6a36731f69d0de6ccaf",
+  "7247988d89f54a20efb4279bedb8b6f2541112b9a7bb90fa03c86ec7a1422e41",
+  "6e2e077f75c6b02aaa916f9e9958b2ac3636cc6df9d820515f8a57b39c057a36",
+  "d484c61ecc2c2e45ec4174141b06e35891fe9a3022cf3bfbba3605ce89a9ed09",
+  "4ac813cc25fa6e99f28faaf015f3fe455fa73cca0b3fb246c8db7de9d00b01ee",
+  "c40e37ee5634282fb2316326ed9ac3214e9b0329ddf854d18805b4c1ef316062",
+  "2ac04c1e554622a8698c13fa0b2ab50359c892c2dccd2d6692ad85497fe1af31",
+  "5e250444fb36b8462a5a84b8ce142bb55a1620206731422c756fef6c94109f65",
+  "9b802c2dd7003f6cf0a4f20d642c0833220a0948f58416de316704f5493e7a97",
+  "d121c23207f15ea3ba0985c290272b8d4ec193b1e82805b75599b276cbf70312",
+  "46cef88e7fc85c7b3e58b0776632fbc116d2ac1b1332c408767ad654f01a2944",
+  "cfcb939d060de345de7b54025f62eac1a4a1fb001ff0a5cfe5381b512d80a6ba",
+  "e16671ea4c72330da7b9d4996887b600a93a8484dcd50064fd1f3f7df6e11cff",
+  "ce4f8dd5b203a7fb47515aeca39b630cd478e343d1698992beba23700b98fb31",
+  "01d6ca2e041ab52542376fdc01886cfec89daa6318b7801c18004fe82b33cc86",
+  "f719b70e6c925625ebad942ee6049eb69fa306b0e7f15893f937adf709d1e199",
+  "e4fae619252a8331f8243cf100374e371bffeaef7fc80f37586b7287e36351fc",
+  "d65f0b762fda862f66db5894a4363236bb3faaa79da7a1c245e480061367aced",
+  "3c5aff3b770a4be93432133ca434d0b8992fd9015605a62f1d62f7e918e4e84f",
+  "cf83931635550c57b74d83c4527f2d4138e3299adc1df3dd5c3c2db2c5d202da",
+  "894dad598b98149e51cfb90ab7eba38f40f34c23af34a9e124621914fb70f22b",
+  "ae2770047b7cfd5ab56210b830bb243406a8c2ed91c4a33d971579c95d92c07e",
+  "6cb5d4d807cfa6bc931007cd231e8e946de75f2487113b5db8e6aeb0186961e2",
+  "c1d828d53b3a10f6a7bb803d6e9def39a46dfeaaf534ccac6a4b2490a3e15d63",
+  "06fb87facf30454535f217328298d8706dabd168fe6afe924b0a070aae116d5b",
+  "22385869ac76aebfbcadd50ad556b9d03fbc350586a6223b9cd679a9a1e737f0",
+  "fee92023246ffaa7879298a58e1d76cb7e9edf97418a30d18e342bdd30e1454c",
+  "fd7b645fd07feb48528a29ecc0f7c7a7a17749ad70f6cdf7e7fb2774f9342897",
+  "f013ffbf6b773351efa303320b71e2aa040b20e2e628cbccbdfaf4901b98c581",
+  "2ad7dabec6910bba0d81fc8673048025203a0f58f82f0ce9501f9525809097e3",
+  "7db1c140462aa2a92224b0bae5b0165edf94f2e374910b85cedf9f8232262f0b",
+  "cf2e691ab4f28a3e0f4fb029d9329e8f631ce0177a129774fda6aed14c9b44d6",
+  "3fb37c7d7ba7aa646776b879f502dab31ce4dcb8cedbf72f55b8c23660454a8c",
+  "ea234d05dffb7fbc5a126180e4be28b96013560387bac8efe694b54e62a4c47f",
+  "49eeb48d5a5f434c2be9dbc8b7577019b3af8f6b493fdea94a7030e909df4840",
+  "d6951367b684d1ad1bf08b22d24ea80b0b362528289477030e2da2d8bf98c789",
+  "755e08c096511a62719f1b26add08313f38fd3bf2baee08faf7dd3dd143c28a7",
+  "4fb97930d775388e75bf65ad2e0b6ffd0e29e420dc652e24a3cd70e0b06f0a74",
+  "e5ab84b8273c97e3234799818c1a30a827932a839c662b4a2eaaad21d6462350",
+  "4965f0d85bfda72e95beb49678b10a50f817821133e7346058b19df9709d2b51",
+  "855a2c53f531b84a07733f36d71b975be56523b21afe2df562dd22da6e36aa25",
+  "a7df0d3b81e38af65b42c2f588a53aea311171b87f011c19b49648b03ce6c11f",
+  "60be9b245dc49771a97f1d56e8945e39c8d0574e5505eddb24f7e56c339d0aaf",
+  "f6fb4c6dccdcb1e93610a2e104b6096521792b8f0845ae329226c131071b5b21",
+  "f471ed0eec76ac1a658df1cd32c61b163717fb7e2bb462b05cf4f072c4cb51b1",
+  "714293f17b51c790db31c2d9296f110de98ca4e182c729c42dd4151ff143ef92",
+  "0f8aae8636c223f563018f911973d68f48d66a13a8001db28fdf1da8578c7959",
+  "c5898620bc7cfed8cebdb64e836b019f484ecb29b91c998028742c2008045b81",
+  "5053e2436da928fcccb94abe25d94592c6e9ef4df5ee826d0d80516ef7674b87",
+  "524fd020ec7cc32d4a64a992fa8dd145e4d23b409333db094546b046d9deacc1",
+  "f9c80c8981e5413bd9b12dee98c83909336db7215cca976676f91893617fc928",
+  "e6d6bf446d241cd3c1abc64223e33d14396bee04b4aa19a0b1256b2a4a858f1c",
+  "80f28a6c56fc1bb5af65d81858f948b348f61185684960a85b9ff3712c130c4f",
+  "421e9427ade202d6a17b8303aff43a39d2e4484ddd752290e2870e1e41ab5c29",
+  "43344072bddbc9bd30af385768a067a2256e5a5026a9c992a26c7c08320243e8",
+  "600bf0863acde7609eb7fa3a6787cdd5816ab04597b2958deaa5e6ca0eba5481",
+  "20031e2b0981f04a4c66d4a7e4fd56edb777c7b55560c86da4a97a65e2339265",
+  "96e0756085c46a8f1825ea2a22b69670367bc3dbe96da62143287deead97f790",
+];
+
+function doActivate() {
+  const input = document.getElementById('actCode');
+  const raw = input.value.replace(/-/g, '').replace(/\s/g, '').toUpperCase();
+  const errEl = document.getElementById('actError');
+
+  if (raw.length !== 12) {
+    errEl.textContent = '激活码格式不正确，应为 12 位（XXXX-XXXX-XXXX）';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // SHA256 hash via SubtleCrypto
+  const encoder = new TextEncoder();
+  crypto.subtle.digest('SHA-256', encoder.encode(raw)).then(hashBuffer => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    if (VALID_HASHES.includes(hashHex)) {
+      // Success
+      localStorage.setItem(ACT_KEY, raw);
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('homeMode').style.display = 'block';
+      initHome();
+    } else {
+      errEl.textContent = '激活码无效，请检查后重试';
+      errEl.style.display = 'block';
+      document.getElementById('btnActivate').textContent = '激活题库';
+      document.getElementById('btnActivate').disabled = false;
+    }
+  }).catch(() => {
+    errEl.textContent = '验证失败，请刷新页面后重试';
+    errEl.style.display = 'block';
+  });
+
+  // Show loading state
+  document.getElementById('btnActivate').textContent = '验证中...';
+  document.getElementById('btnActivate').disabled = true;
+  errEl.style.display = 'none';
 }
 
-function saveQuestions(qs) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(qs));
+function isActivated() {
+  const saved = localStorage.getItem(ACT_KEY);
+  if (!saved || saved.length !== 12) return false;
+  // Verify against hashes
+  const encoder = new TextEncoder();
+  return crypto.subtle ? true : false; // Will be verified async
 }
 
-function loadBaseUrl() {
-  // Auto-detect if already hosted
+// ==================== HOME ====================
+function initHome() {
+  document.getElementById('homeMode').style.display = 'block';
+  document.getElementById('quizMode').style.display = 'none';
+  document.getElementById('resultMode').style.display = 'none';
+
+  document.getElementById('baseUrl').value = loadHostUrl();
+
+  const grid = document.getElementById('chapterGrid');
+  const chapters = Object.values(QUESTION_BANK);
+  let totalQ = 0;
+  let html = '';
+
+  chapters.forEach(ch => {
+    totalQ += ch.count;
+    const types = countTypes(ch.questions);
+    const typeBadges = [];
+    if (types.single) typeBadges.push(`<span class="type-badge single">单选${types.single}</span>`);
+    if (types.multi) typeBadges.push(`<span class="type-badge multi">多选${types.multi}</span>`);
+    if (types.judge) typeBadges.push(`<span class="type-badge judge">判断${types.judge}</span>`);
+
+    html += `
+      <div class="chapter-card" onclick="startChapter('${escAttr(ch.name)}')">
+        <div class="ch-info">
+          <div class="ch-name">${escHtml(ch.name)}</div>
+          <div class="ch-meta">
+            <span>${ch.count} 题</span>
+            ${typeBadges.join(' ')}
+          </div>
+        </div>
+        <span style="font-size:20px;cursor:pointer" onclick="event.stopPropagation();showQR('${escAttr(ch.name)}')" title="生成二维码">📱</span>
+      </div>`;
+  });
+
+  document.getElementById('homeSub').textContent = `共 ${chapters.length} 章 · ${totalQ} 题`;
+  grid.innerHTML = html;
+}
+
+function countTypes(qs) {
+  const c = {};
+  qs.forEach(q => { c[q.type] = (c[q.type] || 0) + 1; });
+  return c;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ==================== HOST URL ====================
+function loadHostUrl() {
   const saved = localStorage.getItem(URL_KEY) || '';
   if (!saved && window.location.protocol.startsWith('http')) {
-    return window.location.href.replace(/#.*$/, '');
+    return window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
   }
   return saved;
 }
 
-function saveBaseUrl() {
-  const url = document.getElementById('baseUrl').value.trim();
-  localStorage.setItem(URL_KEY, url);
-  alert('已保存托管地址');
-}
-
-// ==================== GENERATOR ====================
-let questions = [];
-
-function renderGenerator() {
-  document.getElementById('generatorMode').style.display = 'block';
-  document.getElementById('quizMode').style.display = 'none';
-  document.getElementById('resultMode').style.display = 'none';
-  document.getElementById('emptyState').style.display = 'none';
-
-  questions = loadQuestions();
-  document.getElementById('baseUrl').value = loadBaseUrl();
-  renderQuestionList();
-}
-
-function renderQuestionList() {
-  const container = document.getElementById('questionsContainer');
-  const countEl = document.getElementById('qCount');
-  countEl.textContent = questions.length + ' 题';
-
-  if (questions.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--sub);padding:32px">还没有题目，点击下方按钮添加</div>';
-    return;
-  }
-
-  container.innerHTML = questions.map((q, qi) => `
-    <div class="question-editor">
-      <div class="q-num">
-        <span>第 ${qi + 1} 题</span>
-        <button class="del-btn" onclick="deleteQuestion(${qi})" title="删除">×</button>
-      </div>
-      <textarea placeholder="输入题目内容..." onchange="updateQuestion(${qi},'q',this.value)">${escapeHtml(q.q)}</textarea>
-      <div class="options-grid">
-        ${['A','B','C','D'].map((ltr, oi) => `
-          <div class="option-row${q.a === oi ? ' selected' : ''}" onclick="setAnswer(${qi},${oi})">
-            <span class="opt-letter">${ltr}</span>
-            <input placeholder="选项 ${ltr}" value="${escapeHtml((q.o && q.o[oi]) || '')}" onchange="updateOption(${qi},${oi},this.value)" onclick="event.stopPropagation()" />
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
-}
-
-function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function addQuestion() {
-  questions.push({ q: '', o: ['', '', '', ''], a: 0 });
-  saveQuestions(questions);
-  renderQuestionList();
-}
-
-function deleteQuestion(i) {
-  questions.splice(i, 1);
-  saveQuestions(questions);
-  renderQuestionList();
-}
-
-function updateQuestion(i, field, value) {
-  questions[i][field] = value;
-  saveQuestions(questions);
-}
-
-function updateOption(qi, oi, value) {
-  if (!questions[qi].o) questions[qi].o = ['', '', '', ''];
-  questions[qi].o[oi] = value;
-  saveQuestions(questions);
-}
-
-function setAnswer(qi, oi) {
-  questions[qi].a = oi;
-  saveQuestions(questions);
-  renderQuestionList();
-}
-
-function clearAll() {
-  if (confirm('确定清空所有题目？')) {
-    questions = [];
-    saveQuestions(questions);
-    document.getElementById('qrResult').classList.remove('show');
-    renderQuestionList();
-  }
-}
-
-function addSampleQuestions() {
-  questions = [
-    { q: 'HTML 的全称是什么？', o: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Hyper Transfer Markup Language', 'Home Tool Markup Language'], a: 0 },
-    { q: 'CSS 中 "C" 代表什么？', o: ['Computer', 'Creative', 'Cascading', 'Colorful'], a: 2 },
-    { q: 'JavaScript 中 typeof null 的结果是？', o: ['null', 'undefined', 'object', 'boolean'], a: 2 },
-    { q: '以下哪个不是 JavaScript 的数据类型？', o: ['String', 'Boolean', 'Float', 'Symbol'], a: 2 },
-    { q: 'HTTP 状态码 404 表示什么？', o: ['服务器错误', '未找到', '重定向', '请求成功'], a: 1 },
-  ];
-  saveQuestions(questions);
-  renderQuestionList();
-}
-
-// ==================== ENCODING ====================
-function toBase64url(str) {
-  // UTF-8 safe base64url encoding
-  const bytes = new TextEncoder().encode(str);
-  let binary = '';
-  bytes.forEach(b => binary += String.fromCharCode(b));
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-function fromBase64url(b64url) {
-  let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
-  while (b64.length % 4) b64 += '=';
-  const binary = atob(b64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
-}
-
-function encodeQuestions(qs) {
-  const compact = qs.map(q => ({
-    q: q.q,
-    o: q.o || ['','','',''],
-    a: q.a
-  }));
-  return toBase64url(JSON.stringify(compact));
-}
-
-function decodeQuestions(str) {
-  try {
-    const json = fromBase64url(str);
-    const data = JSON.parse(json);
-    return data.map(q => ({
-      q: q.q || '',
-      o: q.o || ['','','',''],
-      a: typeof q.a === 'number' ? q.a : 0
-    }));
-  } catch (e) {
-    return null;
-  }
-}
-
-function generateQR() {
-  const valid = questions.filter(q => q.q.trim() && q.o.some(o => o.trim()));
-  if (valid.length === 0) {
-    alert('请至少添加一道完整的题目（含题目文本和至少一个选项）');
-    return;
-  }
-
-  const encoded = encodeQuestions(valid);
-  const baseUrl = document.getElementById('baseUrl').value.trim();
-
-  if (!baseUrl) {
-    alert('请先填写托管地址（此 HTML 文件的完整 URL）');
-    return;
-  }
-
-  // Build the full URL with questions in hash
-  const fullUrl = baseUrl.replace(/#.*$/, '') + '#' + encoded;
-  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=' + encodeURIComponent(fullUrl);
-
-  document.getElementById('qrResult').classList.add('show');
-  document.getElementById('qrImage').src = qrApiUrl;
-  document.getElementById('qrUrlText').textContent = fullUrl;
-  document.getElementById('qrHint').textContent = '共 ' + valid.length + ' 题 · 微信/浏览器扫码即可刷题';
-
-  // Warn if URL is very long (QR code might be hard to scan)
-  const warnEl = document.getElementById('qrWarn');
-  if (fullUrl.length > 2000) {
-    warnEl.textContent = '⚠ 题目较多，二维码可能较难扫描。建议减少题目数量。当前URL长度: ' + fullUrl.length + ' 字符';
-  } else if (fullUrl.length > 1000) {
-    warnEl.textContent = '💡 URL长度: ' + fullUrl.length + ' 字符，扫码可能稍慢，建议用浏览器扫码';
+function autoDetectUrl() {
+  if (window.location.protocol.startsWith('http')) {
+    const url = window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
+    document.getElementById('baseUrl').value = url;
+    localStorage.setItem(URL_KEY, url);
   } else {
-    warnEl.textContent = '';
+    alert('当前为本地文件，请手动输入托管地址');
   }
-
-  // Scroll to QR
-  document.getElementById('qrResult').scrollIntoView({ behavior: 'smooth' });
 }
 
-function previewQuiz() {
-  const valid = questions.filter(q => q.q.trim() && q.o.some(o => o.trim()));
-  if (valid.length === 0) return;
-  startQuiz(valid);
+// ==================== CHAPTER → QUIZ ====================
+function startChapter(chName) {
+  const ch = QUESTION_BANK[chName];
+  if (!ch || !ch.questions || ch.questions.length === 0) return;
+
+  currentChapter = chName;
+  quizQuestions = [...ch.questions];
+  currentIndex = 0;
+  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
+  isRevealed = false;
+
+  document.getElementById('homeMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'block';
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('quizTitle').textContent = chName;
+
+  renderQuestion();
 }
 
-// ==================== QUIZ ENGINE ====================
-let quizQuestions = [];
-let currentIndex = 0;
-let userAnswers = []; // -1 = skipped, otherwise index of chosen option
-let quizTitle = '刷题练习';
+function toggleShuffle() {
+  quizQuestions = shuffleArray([...quizQuestions]);
+  currentIndex = 0;
+  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
+  isRevealed = false;
+  document.getElementById('btnShuffle').textContent = '✅';
+  setTimeout(() => { document.getElementById('btnShuffle').textContent = '🔀'; }, 600);
+  renderQuestion();
+}
 
-function shuffle(arr) {
+function shuffleArray(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -701,180 +2672,425 @@ function shuffle(arr) {
   return a;
 }
 
-function startQuiz(qs) {
-  quizQuestions = shuffle(qs);
-  currentIndex = 0;
-  userAnswers = new Array(qs.length).fill(-1);
-  quizTitle = '刷题练习';
-
-  document.getElementById('generatorMode').style.display = 'none';
-  document.getElementById('quizMode').style.display = 'block';
-  document.getElementById('resultMode').style.display = 'none';
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('quizTitle').textContent = quizTitle;
-
-  renderQuestion();
-}
-
+// ==================== RENDER QUESTION ====================
 function renderQuestion() {
   const q = quizQuestions[currentIndex];
   const total = quizQuestions.length;
-  const answered = userAnswers.filter(a => a !== -1).length;
 
   document.getElementById('progressText').textContent = (currentIndex + 1) + ' / ' + total;
-  document.getElementById('progressBar').style.width = ((currentIndex) / total * 100) + '%';
+  document.getElementById('progressBar').style.width = (currentIndex / total * 100) + '%';
+
+  const optLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const userAns = userAnswers[currentIndex];
+  const isMulti = q.type === 'multi';
+
+  let tagClass = 'tag-single', tagText = '单选题';
+  if (q.type === 'multi') { tagClass = 'tag-multi'; tagText = '多选题（多选）'; }
+  if (q.type === 'judge') { tagClass = 'tag-judge'; tagText = '判断题'; }
+
+  const isAnswered = isMulti ? isRevealed : (userAns !== -1);
+
+  let optionsHtml = q.o.map((opt, oi) => {
+    let cls = '';
+    if (isAnswered) {
+      if (isMulti) {
+        const correctIndices = Array.isArray(q.a) ? q.a : [q.a];
+        const selectedIndices = Array.isArray(userAns) ? userAns : [];
+        if (correctIndices.includes(oi) && selectedIndices.includes(oi)) cls = 'correct';
+        else if (!correctIndices.includes(oi) && selectedIndices.includes(oi)) cls = 'wrong';
+        else if (correctIndices.includes(oi) && !selectedIndices.includes(oi)) cls = 'correct';
+      } else {
+        if (oi === q.a) cls = 'correct';
+        else if (oi === userAns && oi !== q.a) cls = 'wrong';
+      }
+    } else if (isMulti) {
+      if (Array.isArray(userAns) && userAns.includes(oi)) cls = 'selected';
+    } else {
+      if (oi === userAns) cls = 'selected';
+    }
+
+    return `<div class="option-item ${cls}" onclick="${isMulti ? `toggleMulti(${oi})` : `selectAnswer(${oi})`}" ${isAnswered ? 'disabled' : ''}>
+      <div class="opt-indicator">${optLabels[oi]}</div>
+      <span>${escHtml(opt)}</span>
+    </div>`;
+  }).join('');
+
+  // Feedback
+  let feedbackHtml = '';
+  if (isAnswered) {
+    if (isMulti) {
+      const correctIndices = Array.isArray(q.a) ? q.a : [q.a];
+      const selectedIndices = Array.isArray(userAns) ? userAns : [];
+      const isCorrect = arraysEqual([...correctIndices].sort(), [...selectedIndices].sort());
+      const correctLetters = correctIndices.map(i => optLabels[i]).join('');
+      feedbackHtml = `<div class="feedback ${isCorrect ? 'ok' : 'bad'}">
+        ${isCorrect ? '✓ 回答正确！' : '✗ 正确答案是 ' + correctLetters}
+      </div>`;
+    } else {
+      feedbackHtml = `<div class="feedback ${userAns === q.a ? 'ok' : 'bad'}">
+        ${userAns === q.a ? '✓ 回答正确！' : '✗ 正确答案是 ' + optLabels[q.a]}
+      </div>`;
+    }
+  }
 
   const body = document.getElementById('quizBody');
-  const optLabels = ['A', 'B', 'C', 'D'];
-  const userAns = userAnswers[currentIndex];
-  const isAnswered = userAns !== -1;
-
   body.innerHTML = `
-    <div class="question-card star-pop">
-      <div class="q-title">${currentIndex + 1}. ${escapeHtml(q.q)}</div>
-      ${q.o.map((opt, oi) => {
-        let cls = '';
-        if (isAnswered) {
-          if (oi === q.a) cls = 'correct';
-          else if (oi === userAns && oi !== q.a) cls = 'wrong';
-        }
-        return `<button class="option-btn ${cls}" onclick="selectAnswer(${oi})" ${isAnswered ? 'disabled' : ''}>
-          <strong>${optLabels[oi]}.</strong> ${escapeHtml(opt || '(空)')}
-        </button>`;
-      }).join('')}
-      <div class="feedback ${isAnswered ? (userAns === q.a ? 'correct-fb' : 'wrong-fb') : ''}" id="feedback">
-        ${isAnswered ? (userAns === q.a ? '✓ 回答正确！' : '✗ 正确答案是 ' + optLabels[q.a]) : ''}
-      </div>
-    </div>
-  `;
+    <div class="question-card star-pop ${isMulti ? 'multi-mode' : ''}">
+      <span class="q-type-tag ${tagClass}">${tagText}</span>
+      <div class="q-title">${currentIndex + 1}. ${escHtml(q.q)}</div>
+      ${optionsHtml}
+      ${feedbackHtml}
+    </div>`;
 
+  // Update buttons
   document.getElementById('btnSkip').style.display = isAnswered ? 'none' : 'inline-block';
-  document.getElementById('btnNext').disabled = !isAnswered;
-  document.getElementById('btnNext').textContent = currentIndex < total - 1 ? '下一题 →' : '查看结果 📊';
 
-  // Scroll to top of card
+  if (isMulti && !isRevealed) {
+    // Show confirm button for multi-select
+    const nav = document.querySelector('.quiz-nav');
+    const confirmBtn = document.getElementById('btnConfirmMulti');
+    if (!confirmBtn) {
+      const btn = document.createElement('button');
+      btn.id = 'btnConfirmMulti';
+      btn.className = 'btn-confirm';
+      btn.textContent = '确认答案 ✓';
+      btn.onclick = confirmMultiAnswer;
+      nav.insertBefore(btn, document.getElementById('btnNext'));
+    }
+    document.getElementById('btnConfirmMulti').style.display = 'inline-block';
+    document.getElementById('btnNext').style.display = 'none';
+  } else {
+    const confirmBtn = document.getElementById('btnConfirmMulti');
+    if (confirmBtn) confirmBtn.style.display = 'none';
+    const nextBtn = document.getElementById('btnNext');
+    nextBtn.style.display = isAnswered ? 'inline-block' : 'none';
+    nextBtn.disabled = !isAnswered;
+    nextBtn.textContent = currentIndex < total - 1 ? '下一题 →' : '查看结果 📊';
+  }
+
   document.querySelector('.quiz-body').scrollIntoView({ behavior: 'smooth' });
 }
 
-function selectAnswer(oi) {
-  if (userAnswers[currentIndex] !== -1) return;
-  userAnswers[currentIndex] = oi;
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) return false; }
+  return true;
+}
 
-  // Re-render to show correct/wrong
+// ==================== ANSWER HANDLING ====================
+function selectAnswer(oi) {
+  if (isRevealed) return;
+  const q = quizQuestions[currentIndex];
+  if (q.type === 'multi') return; // handled by toggleMulti
+  userAnswers[currentIndex] = oi;
+  isRevealed = true;
   renderQuestion();
 
-  // Auto-advance after short delay if correct
-  if (oi === quizQuestions[currentIndex].a) {
-    setTimeout(() => {
-      if (currentIndex < quizQuestions.length - 1) {
-        nextQuestion();
-      }
-    }, 800);
+  // Auto-advance if correct
+  if (oi === q.a) {
+    setTimeout(() => advanceOrFinish(), 800);
   }
+}
+
+function toggleMulti(oi) {
+  if (isRevealed) return;
+  if (!Array.isArray(userAnswers[currentIndex])) {
+    userAnswers[currentIndex] = [];
+  }
+  const arr = userAnswers[currentIndex];
+  const idx = arr.indexOf(oi);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(oi);
+  renderQuestion();
+}
+
+function confirmMultiAnswer() {
+  if (isRevealed) return;
+  isRevealed = true;
+  renderQuestion();
 }
 
 function skipQuestion() {
-  userAnswers[currentIndex] = -1;
-  if (currentIndex < quizQuestions.length - 1) {
-    currentIndex++;
-    renderQuestion();
+  const q = quizQuestions[currentIndex];
+  if (q.type === 'multi') {
+    userAnswers[currentIndex] = [];
   } else {
-    showResult();
+    userAnswers[currentIndex] = -1;
   }
+  isRevealed = false;
+  advanceOrFinish();
 }
 
 function nextQuestion() {
+  isRevealed = false;
+  advanceOrFinish();
+}
+
+function advanceOrFinish() {
   if (currentIndex < quizQuestions.length - 1) {
     currentIndex++;
+    isRevealed = false;
     renderQuestion();
   } else {
     showResult();
   }
 }
 
+// ==================== RESULT ====================
 function showResult() {
   document.getElementById('quizMode').style.display = 'none';
   document.getElementById('resultMode').style.display = 'block';
 
   const total = quizQuestions.length;
-  const correct = userAnswers.filter((a, i) => a === quizQuestions[i].a).length;
-  const wrong = userAnswers.filter((a, i) => a !== -1 && a !== quizQuestions[i].a).length;
-  const skipped = userAnswers.filter(a => a === -1).length;
+  let correct = 0, wrong = 0, skipped = 0;
+  const optLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const wrongList = [];
+
+  quizQuestions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    if (q.type === 'multi') {
+      if (!Array.isArray(ua) || ua.length === 0) { skipped++; wrongList.push({i, skipped: true}); return; }
+      const correctSet = [...(Array.isArray(q.a) ? q.a : [q.a])].sort();
+      const userSet = [...ua].sort();
+      if (arraysEqual(correctSet, userSet)) correct++;
+      else { wrong++; wrongList.push({i, skipped: false}); }
+    } else {
+      if (ua === -1) { skipped++; wrongList.push({i, skipped: true}); return; }
+      if (ua === q.a) correct++;
+      else { wrong++; wrongList.push({i, skipped: false}); }
+    }
+  });
+
   const pct = total > 0 ? Math.round(correct / total * 100) : 0;
 
-  const optLabels = ['A', 'B', 'C', 'D'];
-
-  document.getElementById('resultContent').innerHTML = `
+  let html = `
     <div class="big-score star-pop">${pct}%</div>
     <div class="score-label">正确率</div>
     <div class="result-stats">
-      <div class="stat-card green"><div class="stat-val">${correct}</div><div class="stat-lbl">正确</div></div>
-      <div class="stat-card red"><div class="stat-val">${wrong}</div><div class="stat-lbl">错误</div></div>
+      <div class="stat-card ok"><div class="stat-val">${correct}</div><div class="stat-lbl">正确</div></div>
+      <div class="stat-card bad"><div class="stat-val">${wrong}</div><div class="stat-lbl">错误</div></div>
       <div class="stat-card"><div class="stat-val">${skipped}</div><div class="stat-lbl">跳过</div></div>
       <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">总计</div></div>
-    </div>
+    </div>`;
 
-    ${wrong > 0 ? `
-      <h4 style="margin-bottom:12px">📝 错题回顾</h4>
-      <div class="review-list">
-        ${quizQuestions.map((q, i) => {
-          if (userAnswers[i] === -1 || userAnswers[i] === q.a) return '';
-          return `<div class="review-item">
-            <div class="ri-q">${i + 1}. ${escapeHtml(q.q)}</div>
-            <div class="ri-your">你的答案：${optLabels[userAnswers[i]]}. ${escapeHtml(q.o[userAnswers[i]] || '')}</div>
-            <div class="ri-a">正确答案：${optLabels[q.a]}. ${escapeHtml(q.o[q.a] || '')}</div>
-          </div>`;
-        }).join('')}
-      </div>
-    ` : ''}
+  // Wrong questions review
+  if (wrongList.length > 0) {
+    html += `<h4 style="margin-bottom:10px">📝 错题/未答回顾</h4><div class="review-list">`;
+    wrongList.forEach(w => {
+      const q = quizQuestions[w.i];
+      const ua = userAnswers[w.i];
+      if (q.type === 'multi') {
+        const correctLetters = (Array.isArray(q.a) ? q.a : [q.a]).map(i => optLabels[i]).join(', ');
+        const userLetters = (Array.isArray(ua) ? ua : []).map(i => optLabels[i]).join(', ') || '(未答)';
+        html += `<div class="review-item">
+          <div class="ri-q">${w.i + 1}. ${escHtml(q.q)}</div>
+          <div class="ri-your">你的答案：${userLetters}</div>
+          <div class="ri-a">正确答案：${correctLetters}</div>
+        </div>`;
+      } else {
+        html += `<div class="review-item">
+          <div class="ri-q">${w.i + 1}. ${escHtml(q.q)}</div>
+          <div class="ri-your">你的答案：${ua !== -1 ? optLabels[ua] + '. ' + escHtml(q.o[ua] || '') : '(未答)'}</div>
+          <div class="ri-a">正确答案：${optLabels[q.a]}. ${escHtml(q.o[q.a] || '')}</div>
+        </div>`;
+      }
+    });
+    html += `</div>`;
+  }
 
-    <div class="btn-row" style="justify-content:center">
-      <button class="btn btn-outline" onclick="retryWrong()" ${wrong === 0 ? 'disabled' : ''}>🔄 重做错题 (${wrong})</button>
-      <button class="btn btn-primary" onclick="retryAll()">🔀 重新开始</button>
+  html += `
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-next" onclick="retryWrong()" style="flex:none;padding:10px 20px;border-radius:8px;border:none;background:#f3f4f6;color:#6b7280;font-size:14px;font-weight:600;cursor:pointer" ${wrong === 0 ? 'disabled' : ''}>🔄 重做错题 (${wrong})</button>
+      <button class="btn-next" onclick="retryAll()" style="flex:none;padding:10px 20px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:14px;font-weight:600;cursor:pointer">🔀 重新开始</button>
     </div>
     <div style="margin-top:12px">
-      <button class="btn btn-ghost" onclick="backToGenerator()">← 返回生成器</button>
-    </div>
-  `;
+      <button onclick="backToHome()" style="background:none;border:none;color:var(--sub);cursor:pointer;font-size:14px">← 返回章节列表</button>
+    </div>`;
 
+  document.getElementById('resultContent').innerHTML = html;
   document.getElementById('resultContent').scrollIntoView({ behavior: 'smooth' });
 }
 
 function retryWrong() {
-  const wrongQs = quizQuestions.filter((q, i) => userAnswers[i] !== -1 && userAnswers[i] !== q.a);
+  const wrongQs = quizQuestions.filter((q, i) => {
+    const ua = userAnswers[i];
+    if (q.type === 'multi') {
+      if (!Array.isArray(ua) || ua.length === 0) return true;
+      const correctSet = [...(Array.isArray(q.a) ? q.a : [q.a])].sort();
+      return !arraysEqual(correctSet, [...ua].sort());
+    }
+    return ua === -1 || ua !== q.a;
+  });
   if (wrongQs.length === 0) return;
-  startQuiz(wrongQs);
+  quizQuestions = shuffleArray(wrongQs);
+  currentIndex = 0;
+  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
+  isRevealed = false;
+
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'block';
+  document.getElementById('quizTitle').textContent = (currentChapter || '刷题') + ' · 错题重做';
+  renderQuestion();
 }
 
 function retryAll() {
-  startQuiz(quizQuestions);
+  quizQuestions = shuffleArray([...quizQuestions]);
+  currentIndex = 0;
+  userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
+  isRevealed = false;
+
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'block';
+  renderQuestion();
 }
 
-function backToGenerator() {
-  document.getElementById('resultMode').style.display = 'none';
+function backToHome() {
   document.getElementById('quizMode').style.display = 'none';
-  renderGenerator();
+  document.getElementById('resultMode').style.display = 'none';
+  initHome();
+}
+
+// ==================== QR CODE ====================
+function showMainQR() {
+  const hostUrl = document.getElementById('baseUrl').value.trim();
+  if (!hostUrl) {
+    alert('请先填写托管地址');
+    return;
+  }
+  const cleanUrl = hostUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
+  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(cleanUrl);
+  document.getElementById('qrOverlay').style.display = 'flex';
+  document.getElementById('qrChapterTitle').textContent = '财务管理 · 全部章节';
+  document.getElementById('qrImage').src = qrApiUrl;
+  document.getElementById('qrUrlText').textContent = cleanUrl;
+  document.getElementById('qrHint').textContent = '共 9 章 · 163 题 · 扫码选择章节刷题';
+}
+
+function showQR(chName) {
+  const hostUrl = document.getElementById('baseUrl').value.trim();
+  if (!hostUrl) {
+    alert('请先填写托管地址（此 HTML 文件的完整 URL），例如：\nhttps://yourname.github.io/quiz-app.html');
+    return;
+  }
+
+  const cleanUrl = hostUrl.replace(/#.*$/, '').replace(/\?.*$/, '');
+  const ch = QUESTION_BANK[chName];
+  if (!ch) return;
+
+  // Encode chapter name for URL
+  const encodedChapter = encodeURIComponent(chName);
+  const fullUrl = cleanUrl + '#chapter=' + encodedChapter;
+  const qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(fullUrl);
+
+  document.getElementById('qrOverlay').style.display = 'flex';
+  document.getElementById('qrChapterTitle').textContent = chName;
+  document.getElementById('qrImage').src = qrApiUrl;
+  document.getElementById('qrUrlText').textContent = fullUrl;
+  document.getElementById('qrHint').textContent = `共 ${ch.count} 题 · 微信/浏览器扫码即可刷题`;
+}
+
+function downloadQR() {
+  const img = document.getElementById('qrImage');
+  const chName = document.getElementById('qrChapterTitle').textContent;
+  // Use canvas to download (avoids CORS issues)
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth || 300;
+  canvas.height = img.naturalHeight || 300;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const link = document.createElement('a');
+  link.download = chName + '_二维码.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function closeQR() {
+  document.getElementById('qrOverlay').style.display = 'none';
 }
 
 // ==================== INIT ====================
 function init() {
+  // Check activation first
+  const savedCode = localStorage.getItem(ACT_KEY);
+  if (savedCode && savedCode.length === 12) {
+    // Verify async
+    const encoder = new TextEncoder();
+    crypto.subtle.digest('SHA-256', encoder.encode(savedCode)).then(hashBuffer => {
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      if (VALID_HASHES.includes(hashHex)) {
+        // Valid activation → proceed
+        document.getElementById('lockScreen').style.display = 'none';
+        proceedAfterActivation();
+      } else {
+        // Invalid → show lock
+        localStorage.removeItem(ACT_KEY);
+        document.getElementById('lockScreen').style.display = 'block';
+      }
+    }).catch(() => {
+      // crypto not available → fallback to localStorage trust
+      document.getElementById('lockScreen').style.display = 'none';
+      proceedAfterActivation();
+    });
+  } else {
+    // Not activated → show lock
+    document.getElementById('lockScreen').style.display = 'block';
+  }
+}
+
+function proceedAfterActivation() {
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('homeMode').style.display = 'block';
+
+  // Check if loaded via QR code (hash #chapter=X)
   const hash = window.location.hash.slice(1);
-  if (hash && hash.length > 4) {
-    // Try to decode questions from hash
-    const decoded = decodeQuestions(hash);
-    if (decoded && decoded.length > 0) {
-      startQuiz(decoded);
+  if (hash.startsWith('chapter=')) {
+    const chName = decodeURIComponent(hash.slice(8));
+    if (QUESTION_BANK[chName]) {
+      if (window.location.protocol.startsWith('http')) {
+        const url = window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
+        localStorage.setItem(URL_KEY, url);
+      }
+      initHome();
+      startChapter(chName);
       return;
     }
   }
 
-  // Check for old localStorage data
-  const saved = loadQuestions();
-  if (saved.length > 0) {
-    questions = saved;
+  // Check old-style base64 encoded questions in hash
+  if (hash && hash.length > 10 && !hash.startsWith('chapter=')) {
+    const decoded = tryDecodeLegacy(hash);
+    if (decoded && decoded.length > 0) {
+      currentChapter = '自定义题目';
+      quizQuestions = shuffleArray(decoded.map(q => ({
+        ...q,
+        type: q.type || 'single',
+        o: q.o || ['', '', '', ''],
+        a: q.a || 0
+      })));
+      currentIndex = 0;
+      userAnswers = quizQuestions.map(q => q.type === 'multi' ? [] : -1);
+      isRevealed = false;
+      document.getElementById('homeMode').style.display = 'none';
+      document.getElementById('quizMode').style.display = 'block';
+      document.getElementById('quizTitle').textContent = '自定义题目';
+      renderQuestion();
+      return;
+    }
   }
 
-  renderGenerator();
+  initHome();
+}
+
+function tryDecodeLegacy(b64url) {
+  try {
+    let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch { return null; }
 }
 
 init();
