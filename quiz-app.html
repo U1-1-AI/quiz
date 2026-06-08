@@ -3246,6 +3246,17 @@ function resetStats() {
 }
 
 // ==================== ACTIVATION ====================
+const API_BASE = 'https://quiz-api-xxxx.onrender.com';  // TODO: 部署后端后替换为实际 Render 地址
+
+function getDeviceId() {
+  let id = localStorage.getItem('_device_id');
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substring(2,15) + Date.now().toString(36);
+    localStorage.setItem('_device_id', id);
+  }
+  return id;
+}
+
 const VALID_HASHES = [
   "d1dd369859147bdfb0320b8e542a5a26c517aeda7e989ebd61b013c75c3a7203",
   "fa0a2a82c543ad64a1667c1718e94a93ea7d2639a3fce412456022d066cb4a1a",
@@ -3651,16 +3662,6 @@ const CODE_HASH_MAP = {
   "PG5NV8RNPU9F": "5dd4c50d7e63b5247befbd094035194b609a428fec5c0c4185cf0c46e23cb48f",
   "KTU5BTUGKJGW": "a762aee7e27ebb85ea7199edec034ed8c80eb0f3f596beffeff0d365cc7d2bc3"
 };
-function verifyCodeAsync(raw) {
-  // Simple dictionary lookup - no crypto API needed
-  try {
-    var hash = CODE_HASH_MAP[raw];
-    return Promise.resolve(hash || '');
-  } catch(e) {
-    return Promise.reject(e);
-  }
-}
-
 function doActivate() {
   const input = document.getElementById('actCode');
   const raw = input.value.replace(/-/g, '').replace(/\s/g, '').toUpperCase();
@@ -3677,8 +3678,31 @@ function doActivate() {
   btn.disabled = true;
   errEl.style.display = 'none';
 
-  verifyCodeAsync(raw).then(hashHex => {
-    if (VALID_HASHES.includes(hashHex)) {
+  const formatted = raw.slice(0,4) + '-' + raw.slice(4,8) + '-' + raw.slice(8,12);
+  const deviceId = getDeviceId();
+
+  // 先尝试后端验证（一码一用）
+  fetch(API_BASE + '/api/activate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: formatted, device: deviceId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.token) {
+      localStorage.setItem(ACT_KEY, raw);
+      unlockScreen();
+    } else if (data.error) {
+      errEl.textContent = data.error;
+      errEl.style.display = 'block';
+      btn.textContent = '激活题库';
+      btn.disabled = false;
+    }
+  })
+  .catch(() => {
+    // 后端不可达 → 降级为离线哈希验证
+    const hash = CODE_HASH_MAP[raw];
+    if (hash && VALID_HASHES.includes(hash)) {
       localStorage.setItem(ACT_KEY, raw);
       unlockScreen();
     } else {
@@ -3687,11 +3711,6 @@ function doActivate() {
       btn.textContent = '激活题库';
       btn.disabled = false;
     }
-  }).catch(() => {
-    errEl.textContent = '验证失败，请刷新后重试';
-    errEl.style.display = 'block';
-    btn.textContent = '激活题库';
-    btn.disabled = false;
   });
 }
 
@@ -3699,14 +3718,6 @@ function unlockScreen() {
   document.getElementById('lockScreen').style.display = 'none';
   document.getElementById('homeMode').style.display = 'block';
   initHome();
-}
-
-function isActivated() {
-  const saved = localStorage.getItem(ACT_KEY);
-  if (!saved || saved.length !== 12) return false;
-  // Verify against hashes
-  const encoder = new TextEncoder();
-  return crypto.subtle ? true : false; // Will be verified async
 }
 
 // ==================== HOME ====================
@@ -4219,27 +4230,42 @@ function closeQR() {
 
 // ==================== INIT ====================
 function init() {
-  try {
-    var savedCode = localStorage.getItem(ACT_KEY);
+  const savedCode = localStorage.getItem(ACT_KEY);
+  const deviceId = getDeviceId();
+
+  // 先尝试后端设备检查
+  fetch(API_BASE + '/api/check-device', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ device: deviceId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.activated) {
+      document.getElementById('lockScreen').style.display = 'none';
+      proceedAfterActivation();
+      return;
+    }
+    checkLocal();
+  })
+  .catch(() => {
+    // 后端不可达，使用本地验证
+    checkLocal();
+  });
+
+  function checkLocal() {
     if (savedCode && savedCode.length === 12) {
-      verifyCodeAsync(savedCode).then(function(hashHex) {
-        if (VALID_HASHES.includes(hashHex)) {
-          document.getElementById('lockScreen').style.display = 'none';
-          proceedAfterActivation();
-        } else {
-          localStorage.removeItem(ACT_KEY);
-          document.getElementById('lockScreen').style.display = 'block';
-        }
-      }).catch(function() {
+      var hash = CODE_HASH_MAP[savedCode];
+      if (hash && VALID_HASHES.includes(hash)) {
         document.getElementById('lockScreen').style.display = 'none';
         proceedAfterActivation();
-      });
+      } else {
+        localStorage.removeItem(ACT_KEY);
+        document.getElementById('lockScreen').style.display = 'block';
+      }
     } else {
       document.getElementById('lockScreen').style.display = 'block';
     }
-  } catch(e) {
-    document.getElementById('lockScreen').style.display = 'block';
-    console.error('Init error:', e);
   }
 }
 
