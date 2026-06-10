@@ -421,6 +421,49 @@ body {
   .question-card .q-title { font-size: 15px; }
   .option-item { font-size: 14px; padding: 10px 12px; }
 }
+
+/* ========== BOOKMARK & HISTORY ========== */
+.bookmark-btn {
+  background: none; border: none; font-size: 22px; cursor: pointer;
+  padding: 2px 4px; line-height: 1; transition: transform .2s; color: #cbd5e1;
+}
+.bookmark-btn:active { transform: scale(1.3); }
+.bookmark-btn.bookmarked { color: #f59e0b; }
+
+.history-section, .bookmark-section {
+  max-width: 600px; margin: 20px auto 0; padding: 0 16px;
+}
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px; cursor: pointer; padding: 8px 0;
+}
+.section-header h3 { font-size: 15px; font-weight: 700; color: var(--text); }
+.section-toggle { font-size: 12px; color: var(--sub); }
+.history-list, .bookmark-list { display: flex; flex-direction: column; gap: 8px; }
+.history-item {
+  background: var(--card); border-radius: 10px; padding: 12px 14px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+}
+.history-item .hi-info { flex: 1; }
+.history-item .hi-chapter { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.history-item .hi-meta { font-size: 11px; color: var(--sub); }
+.history-item .hi-score { font-size: 24px; font-weight: 800; text-align: center; min-width: 50px; }
+.history-item .hi-score.high { color: var(--correct); }
+.history-item .hi-score.mid { color: #f59e0b; }
+.history-item .hi-score.low { color: var(--wrong); }
+.bookmark-item {
+  background: var(--card); border-radius: 10px; padding: 10px 14px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+}
+.bookmark-item .bm-q { flex: 1; }
+.bookmark-item .bm-chapter { font-size: 10px; color: var(--sub); margin-bottom: 2px; }
+.bookmark-item .bm-remove {
+  background: none; border: none; color: #999; cursor: pointer; font-size: 18px; padding: 4px;
+}
+.empty-state { text-align: center; padding: 24px; color: var(--sub); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -467,6 +510,23 @@ body {
     <span class="url-hint" style="cursor:pointer" onclick="autoDetectUrl()" title="自动检测">🔍 自动</span>
   </div>
   <div class="chapter-grid" id="chapterGrid"></div>
+    <div class="bookmark-section" id="bookmarkSection" style="display:none">
+      <div class="section-header" onclick="toggleSection('bookmarkList','bookmarkToggle')">
+        <h3>&#9733; 收藏题目</h3>
+        <span class="section-toggle" id="bookmarkToggle">&#9654; 展开</span>
+      </div>
+      <div id="bookmarkList" style="display:none"></div>
+    </div>
+    <div class="history-section" id="historySection" style="display:none">
+      <div class="section-header" onclick="toggleSection('historyList','historyToggle')">
+        <h3>&#128337; 刷题历史</h3>
+        <span style="display:flex;gap:8px;align-items:center">
+          <span class="section-toggle" id="historyToggle">&#9654; 展开</span>
+          <span onclick="event.stopPropagation();clearHistory()" style="font-size:11px;color:var(--sub);cursor:pointer" title="清除历史">&#10060;</span>
+        </span>
+      </div>
+      <div id="historyList" style="display:none"></div>
+    </div>
   <div id="homeFooter" style="text-align:center;margin-top:28px;color:var(--sub);font-size:12px">
     点击章节开始刷题 · 点击 📱 生成二维码
   </div>
@@ -481,6 +541,7 @@ body {
     <span id="quizTitle" style="font-weight:600;color:var(--text)">刷题</span>
     <div style="display:flex;align-items:center;gap:8px">
       <button id="btnShuffle" onclick="toggleShuffle()" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px" title="随机打乱">🔀</button>
+      <button id="btnBookmark" class="bookmark-btn" onclick="toggleBookmark()" title="收藏此题">&#9734;</button>
       <span id="progressText">1/10</span>
     </div>
   </div>
@@ -3729,6 +3790,8 @@ function initHome() {
   document.getElementById('baseUrl').value = loadHostUrl();
 
   const grid = document.getElementById('chapterGrid');
+  renderBookmarks();
+  renderHistory();
   const chapters = Object.values(QUESTION_BANK);
   const stats = loadStats();
   let totalQ = 0;
@@ -3778,7 +3841,7 @@ function initHome() {
   const footerEl = document.getElementById('homeFooter');
   if (footerEl) {
     footerEl.innerHTML = hasStats
-      ? `<span style="cursor:pointer;color:var(--sub);font-size:12px" onclick="resetStats()">🗑 清除练习记录</span>`
+      ? `<span style="cursor:pointer;color:var(--sub);font-size:12px" onclick="resetStats()">🗑 清除练习记录</span> | <span style="cursor:pointer;color:var(--sub);font-size:12px" onclick="clearHistory()">🗑 清除历史</span>`
       : '';
   }
 }
@@ -3829,6 +3892,7 @@ function startChapter(chName) {
   document.getElementById('quizTitle').textContent = chName;
 
   renderQuestion();
+  updateBookmarkBtn();
 }
 
 function toggleShuffle() {
@@ -4076,6 +4140,7 @@ function showResult() {
   // Save progress to localStorage
   if (currentChapter && QUESTION_BANK[currentChapter]) {
     saveStats(currentChapter, correct, total, quizTotal);
+    recordHistory(currentChapter, correct, total, quizTotal, pct);
   }
 
   let html = `
@@ -4322,6 +4387,138 @@ function tryDecodeLegacy(b64url) {
 }
 
 init();
+
+// ==================== BOOKMARK ====================
+const BOOKMARK_KEY = 'quiz_bookmarks';
+function loadBookmarks() {
+  try { return JSON.parse(localStorage.getItem(BOOKMARK_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveBookmarks(b) { try { localStorage.setItem(BOOKMARK_KEY, JSON.stringify(b)); } catch(e) {} }
+
+function toggleBookmark() {
+  if (!currentChapter || currentIndex >= quizQuestions.length) return;
+  var bookmarks = loadBookmarks();
+  var key = currentChapter + '|||' + currentIndex;
+  if (bookmarks[key]) {
+    delete bookmarks[key];
+    document.getElementById('btnBookmark').innerHTML = '&#9734;';
+    document.getElementById('btnBookmark').classList.remove('bookmarked');
+  } else {
+    var q = quizQuestions[currentIndex];
+    bookmarks[key] = { chapter: currentChapter, index: currentIndex, q: q.q.substring(0, 80), type: q.type, time: new Date().toISOString() };
+    document.getElementById('btnBookmark').innerHTML = '&#9733;';
+    document.getElementById('btnBookmark').classList.add('bookmarked');
+  }
+  saveBookmarks(bookmarks);
+}
+
+function updateBookmarkBtn() {
+  if (!currentChapter) return;
+  var bookmarks = loadBookmarks();
+  var key = currentChapter + '|||' + currentIndex;
+  var btn = document.getElementById('btnBookmark');
+  if (!btn) return;
+  if (bookmarks[key]) { btn.innerHTML = '&#9733;'; btn.classList.add('bookmarked'); }
+  else { btn.innerHTML = '&#9734;'; btn.classList.remove('bookmarked'); }
+}
+
+function renderBookmarks() {
+  var container = document.getElementById('bookmarkList');
+  var section = document.getElementById('bookmarkSection');
+  var bookmarks = loadBookmarks();
+  var entries = Object.entries(bookmarks);
+  if (entries.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  var html = '<div class="bookmark-list">';
+  entries.sort(function(a,b) { return new Date(b[1].time) - new Date(a[1].time); });
+  entries.forEach(function(kv) {
+    var bm = kv[1];
+    var typeLabel = {single:'单选', multi:'多选', judge:'判断', calc:'计算'}[bm.type] || bm.type;
+    html += '<div class="bookmark-item" onclick="goToBookmark('' + escAttr(kv[0]) + '')">' +
+      '<div class="bm-q"><div class="bm-chapter">' + escHtml(bm.chapter) + '</div>' +
+      '<strong>[' + typeLabel + ']</strong> ' + escHtml(bm.q) + '</div>' +
+      '<button class="bm-remove" onclick="event.stopPropagation();removeBookmark('' + escAttr(kv[0]) + '')">&#10005;</button></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function goToBookmark(key) {
+  var parts = key.split('|||');
+  var chName = parts[0];
+  var qIndex = parseInt(parts[1]);
+  if (!QUESTION_BANK[chName]) return;
+  currentChapter = chName;
+  quizQuestions = QUESTION_BANK[chName].questions.slice();
+  currentIndex = qIndex;
+  userAnswers = quizQuestions.map(function(q) { return q.type === 'multi' ? [] : -1; });
+  isRevealed = false;
+  document.getElementById('homeMode').style.display = 'none';
+  document.getElementById('resultMode').style.display = 'none';
+  document.getElementById('quizMode').style.display = 'block';
+  document.getElementById('quizTitle').textContent = chName;
+  renderQuestion();
+  updateBookmarkBtn();
+}
+
+function removeBookmark(key) {
+  var bookmarks = loadBookmarks();
+  delete bookmarks[key];
+  saveBookmarks(bookmarks);
+  renderBookmarks();
+  updateBookmarkBtn();
+}
+
+// ==================== HISTORY ====================
+const HISTORY_KEY = 'quiz_history_v2';
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch(e) { return []; }
+}
+function saveHistory(entry) {
+  var history = loadHistory();
+  history.unshift(entry);
+  if (history.length > 50) history.length = 50;
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
+}
+
+function recordHistory(chapterName, correct, total, quizTotal, pct) {
+  saveHistory({ chapter: chapterName, correct: correct, total: total, quizTotal: quizTotal, pct: pct, time: new Date().toISOString() });
+}
+
+function renderHistory() {
+  var container = document.getElementById('historyList');
+  var section = document.getElementById('historySection');
+  var history = loadHistory();
+  if (history.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  var html = '<div class="history-list">';
+  history.forEach(function(h) {
+    var date = new Date(h.time);
+    var dateStr = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0') + ' ' + String(date.getHours()).padStart(2,'0') + ':' + String(date.getMinutes()).padStart(2,'0');
+    var scoreClass = h.pct >= 80 ? 'high' : (h.pct >= 60 ? 'mid' : 'low');
+    html += '<div class="history-item" onclick="startChapter('' + escAttr(h.chapter) + '')">' +
+      '<div class="hi-info"><div class="hi-chapter">' + escHtml(h.chapter) + '</div>' +
+      '<div class="hi-meta">' + dateStr + ' | ' + h.correct + '/' + h.quizTotal + ' 正确 | ' + h.total + ' 总题</div></div>' +
+      '<div class="hi-score ' + scoreClass + '">' + h.pct + '%</div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function clearHistory() {
+  if (confirm('确定要清除所有刷题历史吗？此操作不可恢复。')) {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+  }
+}
+
+function toggleSection(listId, toggleId) {
+  var el = document.getElementById(listId);
+  var toggleEl = document.getElementById(toggleId);
+  if (el.style.display === 'none') { el.style.display = 'block'; if (toggleEl) toggleEl.textContent = '▼ 收起'; }
+  else { el.style.display = 'none'; if (toggleEl) toggleEl.textContent = '▶ 展开'; }
+}
+
 </script>
 </body>
 </html>
