@@ -4434,10 +4434,10 @@ function renderBookmarks() {
   entries.forEach(function(kv) {
     var bm = kv[1];
     var typeLabel = {single:'单选', multi:'多选', judge:'判断', calc:'计算'}[bm.type] || bm.type;
-    html += '<div class="bookmark-item" onclick="goToBookmark('' + escAttr(kv[0]) + '')">' +
+    html += '<div class="bookmark-item" onclick="goToBookmark(\'' + escAttr(kv[0]) + '\')">' +
       '<div class="bm-q"><div class="bm-chapter">' + escHtml(bm.chapter) + '</div>' +
       '<strong>[' + typeLabel + ']</strong> ' + escHtml(bm.q) + '</div>' +
-      '<button class="bm-remove" onclick="event.stopPropagation();removeBookmark('' + escAttr(kv[0]) + '')">&#10005;</button></div>';
+      '<button class="bm-remove" onclick="event.stopPropagation();removeBookmark(\'' + escAttr(kv[0]) + '\')">&#10005;</button></div>';
   });
   html += '</div>';
   container.innerHTML = html;
@@ -4496,7 +4496,7 @@ function renderHistory() {
     var date = new Date(h.time);
     var dateStr = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0') + ' ' + String(date.getHours()).padStart(2,'0') + ':' + String(date.getMinutes()).padStart(2,'0');
     var scoreClass = h.pct >= 80 ? 'high' : (h.pct >= 60 ? 'mid' : 'low');
-    html += '<div class="history-item" onclick="startChapter('' + escAttr(h.chapter) + '')">' +
+    html += '<div class="history-item" onclick="startChapter(\'' + escAttr(h.chapter) + '\')">' +
       '<div class="hi-info"><div class="hi-chapter">' + escHtml(h.chapter) + '</div>' +
       '<div class="hi-meta">' + dateStr + ' | ' + h.correct + '/' + h.quizTotal + ' 正确 | ' + h.total + ' 总题</div></div>' +
       '<div class="hi-score ' + scoreClass + '">' + h.pct + '%</div></div>';
