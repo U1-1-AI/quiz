@@ -3924,20 +3924,17 @@ function escAttr(s) {
 // ==================== HOST URL ====================
 function loadHostUrl() {
   const saved = localStorage.getItem(URL_KEY) || '';
-  if (!saved && window.location.protocol.startsWith('http')) {
+  if (saved) return saved;
+  if (window.location.protocol.startsWith('http')) {
     return window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
   }
-  return saved;
+  return 'https://u1-1-ai.github.io/quiz/刷题库/quiz-app.html';
 }
 
 function autoDetectUrl() {
-  if (window.location.protocol.startsWith('http')) {
-    const url = window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
-    document.getElementById('baseUrl').value = url;
-    localStorage.setItem(URL_KEY, url);
-  } else {
-    alert('当前为本地文件，请手动输入托管地址');
-  }
+  const url = loadHostUrl();
+  document.getElementById('baseUrl').value = url;
+  localStorage.setItem(URL_KEY, url);
 }
 
 // ==================== CHAPTER → QUIZ ====================
