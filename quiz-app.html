@@ -267,6 +267,11 @@ body {
     <div class="header">
       <h1>期末成本会计刷题酱</h1>
       <p class="stats">共 12 章 · 591 题</p>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;align-items:center">
+        <input type="text" id="baseUrl" placeholder="网页线上地址（用于生成二维码）"
+          style="flex:1;max-width:320px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--card)"
+          onchange="saveHostUrl()">
+      </div>
     </div>
     <div class="chapter-grid" id="chapterGrid"></div>
   </div>
@@ -10566,12 +10571,13 @@ function initHome() {
     const ch = QUESTION_BANK[chName];
     const stats = loadStats(chName);
     const doneBadge = stats ? ' <span style="color:var(--correct);font-size:11px">✓ ' + stats.pct + '%</span>' : '';
-    html += '<div class="chapter-card" onclick="startChapter(\'' + escAttr(chName) + '\')">' +
-      '<div class="ch-info">' +
+    html += '<div class="chapter-card">' +
+      '<div class="ch-info" onclick="startChapter(\'' + escAttr(chName) + '\')">' +
         '<div class="ch-name">' + escHtml(chName) + doneBadge + '</div>' +
         '<div class="ch-meta">' + ch.count + ' 题 · 单选/多选/判断</div>' +
       '</div>' +
-      '<div class="ch-badge">开始刷题 →</div>' +
+      '<span style="font-size:20px;cursor:pointer;padding:4px 8px" onclick="event.stopPropagation();showQR(\'' + escAttr(chName) + '\')" title="生成二维码">📱</span>' +
+      '<div class="ch-badge" onclick="startChapter(\'' + escAttr(chName) + '\')">开始刷题 →</div>' +
     '</div>';
   });
   grid.innerHTML = html;
@@ -11077,8 +11083,68 @@ function escAttr(s) {
   return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
 }
 
+// ==================== QR CODE ====================
+const HOST_URL_KEY = 'quiz_host_url_v1';
+
+function loadHostUrl() {
+  const saved = localStorage.getItem(HOST_URL_KEY) || '';
+  if (saved) return saved;
+  if (window.location.protocol.startsWith('http')) {
+    return window.location.href.replace(/#.*$/, '').replace(/\?.*$/, '');
+  }
+  return '';
+}
+
+function saveHostUrl() {
+  const val = document.getElementById('baseUrl').value.trim();
+  if (val) localStorage.setItem(HOST_URL_KEY, val);
+}
+
+function showQR(chName) {
+  const hostUrl = document.getElementById('baseUrl').value.trim() || loadHostUrl();
+  if (!hostUrl) {
+    alert('请先填写网页线上地址（用于生成二维码）');
+    return;
+  }
+  saveHostUrl();
+  const fullUrl = hostUrl + '#chapter=' + encodeURIComponent(chName);
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(fullUrl);
+  document.getElementById('qrTitle').textContent = chName;
+  document.getElementById('qrImg').src = qrUrl;
+  document.getElementById('qrModal').classList.add('show');
+}
+
+function closeQR() {
+  document.getElementById('qrModal').classList.remove('show');
+}
+
+document.getElementById('qrModal').addEventListener('click', function(e) {
+  if (e.target === this) closeQR();
+});
+
+// Init baseUrl on home load
+document.addEventListener('DOMContentLoaded', function() {
+  const saved = loadHostUrl();
+  if (saved) document.getElementById('baseUrl').value = saved;
+});
+
+// ==================== DEEP LINK ====================
+function handleDeepLink() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#chapter=')) {
+    const chName = decodeURIComponent(hash.substring('#chapter='.length));
+    if (QUESTION_BANK[chName]) {
+      startChapter(chName);
+    }
+  }
+}
+
 // ==================== INIT ====================
 checkActivation();
+// Check for deep-link after activation
+if (localStorage.getItem(ACTIVATION_KEY)) {
+  setTimeout(handleDeepLink, 100);
+}
 </script>
 </body>
 </html>
