@@ -10883,7 +10883,17 @@ function showResult() {
   document.getElementById('resultContent').innerHTML = html;
 
   // Record history
-  recordHistory(currentChapter, correct, answered, quizQuestions.length, pct);
+  // Build detail data for history
+  const detailData = reviewItems.map(r => ({
+    q: r.q.q.substring(0, 200),
+    type: r.q.type,
+    o: r.q.o || [],
+    a: r.q.a,
+    ua: r.ua,
+    correct: r.correct,
+    skipped: r.skipped || false
+  }));
+  recordHistory(currentChapter, correct, answered, quizQuestions.length, pct, detailData);
 
   // Save stats
   saveStats(currentChapter, correct, answered, quizQuestions.length);
@@ -10944,9 +10954,9 @@ function loadHistory() {
   try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch(e) { return []; }
 }
 
-function recordHistory(chapter, correct, answered, quizTotal, pct) {
+function recordHistory(chapter, correct, answered, quizTotal, pct, details) {
   const history = loadHistory();
-  history.unshift({ chapter, correct, total: answered, quizTotal, pct, time: new Date().toISOString() });
+  history.unshift({ chapter, correct, total: answered, quizTotal, pct, time: new Date().toISOString(), details: details });
   if (history.length > 50) history.length = 50;
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
 }
@@ -10959,17 +10969,74 @@ function renderHistory() {
   section.style.display = 'block';
 
   let html = '<div class="history-list">';
-  history.forEach(h => {
+  history.forEach((h, idx) => {
     const d = new Date(h.time);
     const ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
     const cls = h.pct >= 80 ? 'high' : (h.pct >= 60 ? 'mid' : 'low');
-    html += '<div class="history-item" onclick="startChapter(\'' + escAttr(h.chapter) + '\')">' +
-      '<div class="hi-info"><div class="hi-chapter">' + escHtml(h.chapter) + '</div>' +
-      '<div class="hi-meta">' + ds + ' | ' + h.correct + '/' + h.quizTotal + ' 正确</div></div>' +
-      '<div class="hi-score ' + cls + '">' + h.pct + '%</div></div>';
+    const hasDetail = h.details && h.details.length > 0;
+    html += '<div class="history-item">' +
+      '<div class="hi-info" onclick="startChapter(\'' + escAttr(h.chapter) + '\')">' +
+        '<div class="hi-chapter">' + escHtml(h.chapter) + '</div>' +
+        '<div class="hi-meta">' + ds + ' | ' + h.correct + '/' + h.quizTotal + ' 正确' +
+          (hasDetail ? ' | <span style="color:var(--accent);cursor:pointer" onclick="event.stopPropagation();viewHistoryDetail(' + idx + ')">查看详情 →</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="hi-score ' + cls + '">' + h.pct + '%</div>' +
+    '</div>';
   });
   html += '</div>';
+  // Detail view area
+  html += '<div id="historyDetail" style="margin-top:10px"></div>';
   container.innerHTML = html;
+}
+
+function viewHistoryDetail(idx) {
+  const history = loadHistory();
+  const h = history[idx];
+  if (!h || !h.details) return;
+
+  const container = document.getElementById('historyDetail');
+  const letters = ['A','B','C','D','E'];
+
+  let html = '<div style="background:var(--card);border-radius:10px;padding:14px;border:1px solid var(--border);margin-top:8px">';
+  html += '<div style="font-weight:700;margin-bottom:10px;display:flex;justify-content:space-between">' +
+    '<span>📋 ' + escHtml(h.chapter) + ' · 答题详情</span>' +
+    '<span style="cursor:pointer;color:var(--sub);font-size:12px" onclick="closeHistoryDetail()">✕ 收起</span>' +
+    '</div>';
+
+  html += '<div style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto">';
+  h.details.forEach((r, ri) => {
+    const icon = r.skipped ? '⊘' : (r.correct ? '✓' : '✗');
+    const color = r.skipped ? 'var(--sub)' : (r.correct ? 'var(--correct)' : 'var(--wrong)');
+    let ansStr = '';
+    if (r.type === 'single') {
+      if (r.ua !== null && r.ua !== -1) ansStr = '选了 ' + letters[r.ua];
+      else ansStr = '未作答';
+      ansStr += ' | 答案 ' + letters[r.a];
+    } else if (r.type === 'multi') {
+      if (r.ua && r.ua.length > 0) ansStr = '选了 ' + r.ua.map(i => letters[i]).join('');
+      else ansStr = '未作答';
+      ansStr += ' | 答案 ' + (Array.isArray(r.a) ? r.a.map(i => letters[i]).join('') : '');
+    } else if (r.type === 'judge') {
+      if (r.ua === 0) ansStr = '选了 正确';
+      else if (r.ua === 1) ansStr = '选了 错误';
+      else ansStr = '未作答';
+      ansStr += ' | 答案 ' + (r.a === 0 ? '正确' : '错误');
+    }
+    html += '<div style="font-size:13px;padding:8px 10px;border-radius:8px;background:' +
+      (r.skipped ? '#f9f9f9' : (r.correct ? '#eaf7f0' : '#fdecea')) + '">' +
+      '<strong style="color:' + color + '">' + icon + ' ' + (ri+1) + '.</strong> ' +
+      escHtml(r.q.substring(0, 120)) +
+      '<div style="font-size:12px;margin-top:2px;color:var(--sub)">' + ansStr + '</div>' +
+      '</div>';
+  });
+  html += '</div></div>';
+
+  container.innerHTML = html;
+}
+
+function closeHistoryDetail() {
+  document.getElementById('historyDetail').innerHTML = '';
 }
 
 function clearHistory() {
